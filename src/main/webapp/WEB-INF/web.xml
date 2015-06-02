@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         id="WebApp_ID" version="3.0">
+    <display-name>Measurements Gateway</display-name>
+
+    <context-param>
+        <param-name>oauth.rs.provider-class</param-name>
+        <param-value>com.hp.gaia.mgs.rest.oauth2.OAuthRSProvider</param-value>
+    </context-param>
+    
+    <servlet>
+        <servlet-name>jersey-serlvet</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>com.hp.gaia.mgs.rest</param-value><!--com.wordnik.swagger.jaxrs.json,-->
+        </init-param>
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>javax.ws.rs.container.ContainerRequestFilter</param-name>
+            <param-value>com.hp.gaia.mgs.rest.filters.InputFilter</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>jersey-serlvet</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+
+
+<!--    <servlet-mapping>
+        <servlet-name>jersey-serlvet</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>-->
+
+
+<!--    <servlet>
+        <servlet-name>Jersey2Config</servlet-name>
+        <servlet-class>com.wordnik.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
+        <init-param>
+            <param-name>api.version</param-name>
+            <param-value>1.0.0</param-value>
+        </init-param>
+        <init-param>
+            <param-name>swagger.api.basepath</param-name>
+            <param-value>http://localhost:9000/mgs</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>-->
+
+    <filter>
+        <filter-name>InputFilter</filter-name>
+        <filter-class>com.hp.gaia.mgs.rest.filters.InputFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>InputFilter</filter-name>
+        <url-pattern>/rest/v1/gateway/publish</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>Oauth2Filter</filter-name>
+        <filter-class>com.hp.gaia.mgs.rest.filters.OAuth2Filter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+    <filter-mapping>
+        <filter-name>Oauth2Filter</filter-name>
+        <url-pattern>/rest/v1/gateway/publish</url-pattern>
+    </filter-mapping>
+</web-app>
