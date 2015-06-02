@@ -44,7 +44,7 @@ public class TokenManagementResource {
             try {
                 String token = oauthIssuerImpl.accessToken();
                 TokensDB.tokensPerTenant.put(token, tenantId);
-                return Response.status(Response.Status.OK).entity(token).build();
+                return Response.status(Response.Status.CREATED).entity(token).build();
             } catch (OAuthSystemException e) {
                 e.printStackTrace();
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Failed to generate token").build();
