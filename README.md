@@ -18,8 +18,19 @@ API:
     - Method: POST
     - Headers: Content-Type: application/json, Accept: application/json, Authorization: Bearer <oauth2 token>
     - Response code: 201
-    - Body: [{"metric":"metric-type(test,build,defect,scm)","category":"automatic-test,commit,fork","name":"test-name,job-name,defect-number,sha-of-commit","source":"ci-server,qc-name/project,scm-repository","timestamp":1432191000,"tags":["any.string.value.for.further.usage","any.string.value.for.further.usage"],"measurements":[{"name":"aut.build","value":968},{"name":"duration","value":350}],"events":[{"name":"status","value":"failed"},{"name":"runBy","value":"admin"}]}]
-    
+    - Body: 
+    ``` json
+    [{
+      "metric":"metric-type(test,build,defect,scm)",
+      "category":"automatic-test,commit,fork",
+      "name":"test-name,job-name,defect-number,sha-of-commit",
+      "source":"ci-server,qc-name/project,scm-repository",
+      "timestamp":1432191000,
+      "tags":["any.string.value.for.further.usage","any.string.value.for.further.usage"],
+      "measurements":[{"name":"aut.build","value":968},{"name":"duration","value":350}],
+      "events":[{"name":"status","value":"failed"},{"name":"runBy","value":"admin"}]
+    }]
+    ```
 - Create oauth2 token for tenant
     - URL: /mgs/rest/auth/set/{tenantId}
     - Method: POST
