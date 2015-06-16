@@ -70,6 +70,10 @@
         <appender-ref ref="mgs" />
     </logger>
 
+    <logger name="org.springframework" level="error" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <root level="error">
         <appender-ref ref="STDOUT" />
     </root>

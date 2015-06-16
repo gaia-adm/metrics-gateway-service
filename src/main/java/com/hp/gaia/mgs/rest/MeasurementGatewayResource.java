@@ -1,9 +1,8 @@
 package com.hp.gaia.mgs.rest;
 
 import com.hp.gaia.mgs.dto.Metric;
-import com.hp.gaia.mgs.rest.oauth2.OAuth2Client;
 import com.hp.gaia.mgs.services.MetricsCollectorService;
-import org.apache.oltu.oauth2.common.OAuth;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -18,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Created by belozovs on 5/21/2015.
  */
-
+@Component
 @Path("/v1/gateway")
 public class MeasurementGatewayResource {
 
@@ -34,7 +33,7 @@ public class MeasurementGatewayResource {
         CompletableFuture.runAsync(() -> {
             try {
                 for (Metric metric : metrics) {
-                    metricsCollector.storeMetric(metric, (String) request.getAttribute(OAuth.OAUTH_CLIENT_ID));
+                    metricsCollector.storeMetric(metric);
                 }
 
             } catch (IOException e) {

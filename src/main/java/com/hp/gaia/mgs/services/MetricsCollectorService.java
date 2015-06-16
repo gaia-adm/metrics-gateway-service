@@ -22,10 +22,9 @@ public class MetricsCollectorService {
 
 
     String basedir = System.getProperty("user.dir");
-    File outputFile = new File(basedir+"/logs", "storage.txt");
 
 
-    public void storeMetric(Metric m, String tenantId) throws FileNotFoundException {
+    public void storeMetric(Metric m) throws FileNotFoundException {
 
         String name = m.getName();
         String category = m.getCategory();
@@ -36,16 +35,7 @@ public class MetricsCollectorService {
         List<Event> events = m.getEvents();
         List<Measurement> measurements = m.getMeasurements();
 
-        StringBuffer sb = new StringBuffer();
-/*        sb.append(new Date()).append(" ").append(Thread.currentThread().getId()).append(" ");
-        sb.append("Metric received: " + name);*/
+        logger.info("Metric received: {}", name);
 
-        logger.info("Tenant {} got a metric: {}", tenantId, name);
-
-/*        try (PrintWriter printWriter = new PrintWriter(new FileOutputStream(outputFile, true))) {
-            printWriter.println(sb.toString());
-        } catch (FileNotFoundException fnfe) {
-            throw fnfe;
-        }*/
     }
 }

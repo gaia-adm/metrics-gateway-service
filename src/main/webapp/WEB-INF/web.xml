@@ -6,16 +6,35 @@
     <display-name>Measurements Gateway</display-name>
 
     <context-param>
-        <param-name>oauth.rs.provider-class</param-name>
-        <param-value>com.hp.gaia.mgs.rest.oauth2.OAuthRSProvider</param-value>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/spring-security.xml
+        </param-value>
     </context-param>
-    
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+
+    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>spring</servlet-name>
+        <!--<url-pattern>/</url-pattern>-->
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>jersey-serlvet</servlet-name>
         <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
         <init-param>
             <param-name>jersey.config.server.provider.packages</param-name>
-            <param-value>com.hp.gaia.mgs.rest</param-value><!--com.wordnik.swagger.jaxrs.json,-->
+            <param-value>com.hp.gaia.mgs.rest</param-value>
         </init-param>
         <init-param>
             <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
@@ -25,7 +44,7 @@
             <param-name>javax.ws.rs.container.ContainerRequestFilter</param-name>
             <param-value>com.hp.gaia.mgs.rest.filters.InputFilter</param-value>
         </init-param>
-        <load-on-startup>1</load-on-startup>
+        <!--<load-on-startup>1</load-on-startup>-->
         <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
@@ -34,42 +53,27 @@
     </servlet-mapping>
 
 
-<!--    <servlet-mapping>
-        <servlet-name>jersey-serlvet</servlet-name>
-        <url-pattern>/api/*</url-pattern>
-    </servlet-mapping>-->
-
-
-<!--    <servlet>
-        <servlet-name>Jersey2Config</servlet-name>
-        <servlet-class>com.wordnik.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
-        <init-param>
-            <param-name>api.version</param-name>
-            <param-value>1.0.0</param-value>
-        </init-param>
-        <init-param>
-            <param-name>swagger.api.basepath</param-name>
-            <param-value>http://localhost:9000/mgs</param-value>
-        </init-param>
-        <load-on-startup>2</load-on-startup>
-    </servlet>-->
-
     <filter>
         <filter-name>InputFilter</filter-name>
         <filter-class>com.hp.gaia.mgs.rest.filters.InputFilter</filter-class>
         <async-supported>true</async-supported>
     </filter>
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
     <filter-mapping>
         <filter-name>InputFilter</filter-name>
         <url-pattern>/rest/v1/gateway/publish</url-pattern>
     </filter-mapping>
-    <filter>
-        <filter-name>Oauth2Filter</filter-name>
-        <filter-class>com.hp.gaia.mgs.rest.filters.OAuth2Filter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
     <filter-mapping>
-        <filter-name>Oauth2Filter</filter-name>
-        <url-pattern>/rest/v1/gateway/publish</url-pattern>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <!--<url-pattern>/rest/v1/gateway/*</url-pattern>-->
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <!--    <welcome-file-list>
+            <welcome-file>index.jsp</welcome-file>
+        </welcome-file-list>-->
 </web-app>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd ">
+
+
+
+    <context:property-placeholder system-properties-mode="OVERRIDE" location="classpath*:default.properties"/>
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="systemPropertiesMode" value="2" />
+    </bean>
+
+
+    <sec:authentication-manager alias="authenticationManager"/>
+
+    <http auto-config="true" use-expressions="false" create-session="stateless"
+          xmlns="http://www.springframework.org/schema/security">
+        <csrf disabled="true"/>
+        <anonymous enabled="false"/>
+        <intercept-url pattern="/rest/v1/gateway/**" access="ROLE_APP"/>
+        <custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER"/>
+    </http>
+
+    <bean id="remoteTokenServices"
+          class="org.springframework.security.oauth2.provider.token.RemoteTokenServices">
+        <property name="checkTokenEndpointUrl" value="http://${authServer}/auth/oauth/check_token"/>
+        <property name="restTemplate" ref="restTemplate"/>
+    </bean>
+
+    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+        <constructor-arg name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <oauth:resource-server id="resourceServerFilter"
+                           resource-id="test" token-services-ref="remoteTokenServices"/>
+
+</beans>
