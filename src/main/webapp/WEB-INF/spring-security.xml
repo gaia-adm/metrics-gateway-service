@@ -29,7 +29,7 @@
 
     <bean id="remoteTokenServices"
           class="org.springframework.security.oauth2.provider.token.RemoteTokenServices">
-        <property name="checkTokenEndpointUrl" value="http://${authServer}/auth/oauth/check_token"/>
+        <property name="checkTokenEndpointUrl" value="http://${authServer}/sts/oauth/check_token"/>
         <property name="restTemplate" ref="restTemplate"/>
     </bean>
 
