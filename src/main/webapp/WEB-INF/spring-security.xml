@@ -31,6 +31,7 @@
           class="org.springframework.security.oauth2.provider.token.RemoteTokenServices">
         <property name="checkTokenEndpointUrl" value="http://${authServer}/sts/oauth/check_token"/>
         <property name="restTemplate" ref="restTemplate"/>
+        <property name="accessTokenConverter" ref="customAccessTokenConverter" />
     </bean>
 
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
@@ -38,11 +39,16 @@
             <list>
                 <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
                 <bean class="org.springframework.http.converter.FormHttpMessageConverter"/>
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
             </list>
         </constructor-arg>
+        <property name="errorHandler" ref="customResponseErrorHandler" />
     </bean>
 
-    <oauth:resource-server id="resourceServerFilter"
-                           resource-id="test" token-services-ref="remoteTokenServices"/>
+    <bean id="customResponseErrorHandler" class="com.hp.gaia.mgs.spring.CustomResponseErrorHandler" />
+
+    <bean id="customAccessTokenConverter" class="com.hp.gaia.mgs.spring.MultiTenantAccessTokenConverter" />
+
+    <oauth:resource-server id="resourceServerFilter" resource-id="test" token-services-ref="remoteTokenServices"/>
 
 </beans>

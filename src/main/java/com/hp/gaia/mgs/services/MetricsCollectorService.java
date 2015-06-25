@@ -24,7 +24,7 @@ public class MetricsCollectorService {
     String basedir = System.getProperty("user.dir");
 
 
-    public void storeMetric(Metric m) throws FileNotFoundException {
+    public void storeMetric(Metric m)  {
 
         String name = m.getName();
         String category = m.getCategory();
@@ -36,6 +36,13 @@ public class MetricsCollectorService {
         List<Measurement> measurements = m.getMeasurements();
 
         logger.info("Metric received: {}", name);
+    }
 
+    public void storeMetric(String thingToPrint) {
+        logger.info("Received metrics - " + thingToPrint);
+    }
+
+    public void storeMetric(String numOfMetrics, Integer tenantId) {
+        logger.info("Tenant " + tenantId + " received " + numOfMetrics + " metrics");
     }
 }

@@ -65,7 +65,7 @@
     </filter>
     <filter-mapping>
         <filter-name>InputFilter</filter-name>
-        <url-pattern>/rest/v1/gateway/publish</url-pattern>
+        <url-pattern>/rest/v1/gateway/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>

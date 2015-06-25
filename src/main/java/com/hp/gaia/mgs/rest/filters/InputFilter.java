@@ -1,11 +1,7 @@
 package com.hp.gaia.mgs.rest.filters;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -27,7 +23,7 @@ public class InputFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        if(servletRequest.getContentLengthLong() < 2){
+        if (servletRequest.getContentLengthLong() < 2) {
             HttpServletResponse response = (HttpServletResponse) servletResponse;
             response.reset();
             response.setStatus(Response.Status.PRECONDITION_FAILED.getStatusCode());
