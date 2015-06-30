@@ -3,6 +3,7 @@ package com.hp.gaia.mgs.rest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.hp.gaia.mgs.dto.Metric;
 import com.hp.gaia.mgs.services.MetricsCollectorService;
+import com.hp.gaia.mgs.services.PropertiesKeeperService;
 import com.hp.gaia.mgs.spring.MultiTenantOAuth2Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -16,9 +17,11 @@ import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by belozovs on 5/21/2015.
@@ -27,7 +30,13 @@ import java.util.concurrent.CompletableFuture;
 @Path("/v1/gateway")
 public class MeasurementGatewayResource {
 
-    MetricsCollectorService metricsCollector = new MetricsCollectorService();
+    MetricsCollectorService metricsCollector;
+    private boolean useAmqp = Boolean.valueOf(PropertiesKeeperService.getInstance().getProperties().getProperty("useAmqp"));
+
+    public MeasurementGatewayResource() throws IOException {
+        metricsCollector = new MetricsCollectorService();
+
+    }
 
     @POST
     @Path("/publish")
@@ -48,15 +57,35 @@ public class MeasurementGatewayResource {
     @Path("/publish2")
     @Consumes("application/json")
     @Produces("application/json")
-    public void publishMetricAsync2(@Context HttpServletRequest request, @Suspended final AsyncResponse response, JsonNode jsonMetrics) {
+    public void publishMetricAsync2(@Context HttpServletRequest request, @Suspended final AsyncResponse response, JsonNode jsonMetrics) throws ExecutionException, InterruptedException {
 
-        Map tenantDetails = ((MultiTenantOAuth2Authentication)SecurityContextHolder.getContext().getAuthentication()).getTenantDetails();
+        Map tenantDetails = ((MultiTenantOAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getTenantDetails();
 
-        System.out.println();
+        System.out.println("metric received");
 
-        CompletableFuture.runAsync(() -> {
-            metricsCollector.storeMetric(String.valueOf(jsonMetrics.get("points").size()), (Integer) tenantDetails.get("tenantId"));
-        }).thenApply((result) -> response.resume(Response.status(Response.Status.CREATED).entity(result).build()));
+        CompletableFuture.supplyAsync(() -> {
+            if (useAmqp) {
+                try {
+                    metricsCollector.publishMetric(String.valueOf(jsonMetrics.get("points")), String.valueOf(tenantDetails.get("tenantId")));
+                    return null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage() ;
+                }
+            } else {
+                metricsCollector.storeMetric(String.valueOf(jsonMetrics.get("points").size()), (Integer) tenantDetails.get("tenantId"));
+                return null;
+            }
+        }).handle((result, ex) -> {
+            if (result == null) {
+                return response.resume(Response.status(Response.Status.CREATED).entity(result).build());
+
+            } else {
+                return response.resume(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build());
+
+            }
+        });
+
     }
 
 }
