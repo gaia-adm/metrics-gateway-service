@@ -25,16 +25,19 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * Created by belozovs on 5/21/2015.
+ *
  */
 @Component
 @Path("/v1/gateway")
 public class MeasurementGatewayResource {
 
-    MetricsCollectorService metricsCollector;
-    private boolean useAmqp = Boolean.valueOf(PropertiesKeeperService.getInstance().getProperties().getProperty("useAmqp"));
+    MetricsCollectorService metricsCollector  = new MetricsCollectorService();
+
+
+    private Boolean useAmqp = Boolean.valueOf(PropertiesKeeperService.getInstance().getEnvOrPropAsString("useAmqp"));
 
     public MeasurementGatewayResource() throws IOException {
-        metricsCollector = new MetricsCollectorService();
+        System.out.println("useAmqp flag is " + useAmqp);
         if(useAmqp){
             System.out.println("Metrics will be published to RabbitMQ");
         } else {

@@ -1,10 +1,12 @@
 package com.hp.gaia.mgs.services;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 /**
  * Created by belozovs on 6/30/2015.
+ * Return property from default.properties or environment variable if set to override defaults
  */
 public class PropertiesKeeperService {
 
@@ -12,6 +14,9 @@ public class PropertiesKeeperService {
 
     private static PropertiesKeeperService instance = null;
     private static Properties properties = null;
+    private static Map<String, String> envVar = System.getenv();
+
+
 
     private PropertiesKeeperService() throws IOException {
         properties = new Properties();
@@ -25,8 +30,12 @@ public class PropertiesKeeperService {
         return instance;
     }
 
-    public Properties getProperties() throws IOException {
-        return  properties;
+    public String getEnvOrPropAsString(String name) {
+        if(envVar.get(name) != null){
+            return envVar.get(name);
+        } else {
+            return properties.getProperty(name);
+        }
     }
 
 }

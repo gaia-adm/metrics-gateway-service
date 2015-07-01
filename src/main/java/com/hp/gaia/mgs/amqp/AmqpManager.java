@@ -6,11 +6,11 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.TimeoutException;
 
 /**
  * Created by belozovs on 6/30/2015.
+ * Manage RabbitMQ connection for publish metrics
  */
 
 public class AmqpManager {
@@ -21,12 +21,11 @@ public class AmqpManager {
     private Channel channel = null;
 
     public AmqpManager() throws IOException {
-        Properties properties = PropertiesKeeperService.getInstance().getProperties();
-        MQ_SERVER_NAME = properties.getProperty("amqpHost");
-        MQ_SERVER_PORT = Integer.parseInt(properties.getProperty("amqpPort"));
-        MQ_SERVER_USERNAME = properties.getProperty("amqpUser");
-        MQ_SERVER_PASSWORD = properties.getProperty("amqpPassword");
-        QUEUE_NAME = properties.getProperty("amqpRoutingKey");
+        MQ_SERVER_NAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpHost");
+        MQ_SERVER_PORT = Integer.parseInt(PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpPort"));
+        MQ_SERVER_USERNAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpUser");
+        MQ_SERVER_PASSWORD = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpPassword");
+        QUEUE_NAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpRoutingKey");
 
         System.out.println("MQ details: " + MQ_SERVER_NAME + ":" + MQ_SERVER_PORT + ":" + QUEUE_NAME);
 
