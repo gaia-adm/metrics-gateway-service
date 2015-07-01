@@ -35,6 +35,11 @@ public class MeasurementGatewayResource {
 
     public MeasurementGatewayResource() throws IOException {
         metricsCollector = new MetricsCollectorService();
+        if(useAmqp){
+            System.out.println("Metrics will be published to RabbitMQ");
+        } else {
+            System.out.println("Metrics will be published to log file");
+        }
 
     }
 

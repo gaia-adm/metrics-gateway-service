@@ -28,7 +28,7 @@ public class AmqpManager {
         MQ_SERVER_PASSWORD = properties.getProperty("amqpPassword");
         QUEUE_NAME = properties.getProperty("amqpRoutingKey");
 
-        System.out.println(MQ_SERVER_NAME + ":" + MQ_SERVER_PORT + ":" + QUEUE_NAME);
+        System.out.println("MQ details: " + MQ_SERVER_NAME + ":" + MQ_SERVER_PORT + ":" + QUEUE_NAME);
 
     }
 
