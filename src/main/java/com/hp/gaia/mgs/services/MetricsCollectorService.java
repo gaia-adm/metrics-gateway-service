@@ -4,9 +4,7 @@ import com.hp.gaia.mgs.amqp.AmqpManager;
 import com.hp.gaia.mgs.dto.Event;
 import com.hp.gaia.mgs.dto.Measurement;
 import com.hp.gaia.mgs.dto.Metric;
-import com.hp.gaia.mgs.spring.MyCustomException;
 import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +54,7 @@ public class MetricsCollectorService {
 
     public void publishMetric(String metric, String tenantIdString) throws IOException, TimeoutException {
         AMQP.BasicProperties.Builder propsBuilder = new AMQP.BasicProperties.Builder();
-        Map map = new HashMap<String,Object>();
+        Map map = new HashMap<String, Object>();
         map.put(DB_NAME_PROPERTY, tenantIdString);
         propsBuilder.headers(map);
         amqpManager.getChannel().basicPublish("", amqpManager.getQueueName(), propsBuilder.build(), metric.getBytes());

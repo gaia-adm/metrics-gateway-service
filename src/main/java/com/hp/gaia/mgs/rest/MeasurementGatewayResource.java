@@ -78,10 +78,43 @@ public class MeasurementGatewayResource {
                     return null;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage() ;
+                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage();
                 }
             } else {
                 metricsCollector.storeMetric(String.valueOf(jsonMetrics.get("points").size()), (Integer) tenantDetails.get("tenantId"));
+                return null;
+            }
+        }).handle((result, ex) -> {
+            if (result == null) {
+                return response.resume(Response.status(Response.Status.CREATED).entity(result).build());
+
+            } else {
+                return response.resume(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build());
+
+            }
+        });
+
+    }
+
+    @POST
+    @Path("/publish3")
+    public void publishMetricAsync3(@Context HttpServletRequest request, @Suspended final AsyncResponse response, String jsonMetrics) throws ExecutionException, InterruptedException {
+
+        Map tenantDetails = ((MultiTenantOAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getTenantDetails();
+
+        System.out.println("metric received");
+
+        CompletableFuture.supplyAsync(() -> {
+            if (useAmqp) {
+                try {
+                    metricsCollector.publishMetric(jsonMetrics, String.valueOf(tenantDetails.get("tenantId")));
+                    return null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage() ;
+                }
+            } else {
+                metricsCollector.storeMetric(jsonMetrics, (Integer) tenantDetails.get("tenantId"));
                 return null;
             }
         }).handle((result, ex) -> {
