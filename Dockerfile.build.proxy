@@ -11,10 +11,10 @@ WORKDIR $GAIA_HOME
 ADD pom.xml $GAIA_HOME
 
 # get all the downloads out of the way
-RUN ["mvn","verify","clean","--fail-never"]
+RUN ["mvn","-DuseProxy=true","-DproxyHost=web-proxy.israel.hp.com","-DproxyPort=8080","verify","clean","--fail-never"]
 
 # add source
 ADD . $GAIA_HOME
 
 # run maven verify
-RUN ["mvn","verify"]
+RUN ["mvn","-DuseProxy=true","-DproxyHost=web-proxy.israel.hp.com","-DproxyPort=8080","verify"]
