@@ -1,3 +1,4 @@
+CircleCI build status: [![Circle CI](https://circleci.com/gh/gaia-adm/metrics-gateway-service.svg?style=svg)](https://circleci.com/gh/gaia-adm/metrics-gateway-service)
 # metrics-gateway-service
 Temporary metrics-gateway-service based on jax-rs and jersey with async I/O
 This implementation is temporary, can be moved to another platform if we discover it is not robust and scalable enough
