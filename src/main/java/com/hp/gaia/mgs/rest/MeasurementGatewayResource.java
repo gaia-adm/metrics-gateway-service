@@ -129,4 +129,15 @@ public class MeasurementGatewayResource {
 
     }
 
+    @POST
+    @Path("/event")
+    public void publishEvent(@Context HttpServletRequest request, @Suspended final AsyncResponse response, String jsonEvents) throws ExecutionException, InterruptedException {
+
+        Map tenantDetails = ((MultiTenantOAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getTenantDetails();
+
+
+
+    }
+
+
 }
