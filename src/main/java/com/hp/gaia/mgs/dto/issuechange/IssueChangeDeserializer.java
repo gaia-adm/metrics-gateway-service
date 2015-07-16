@@ -1,7 +1,6 @@
 package com.hp.gaia.mgs.dto.issuechange;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,13 +12,12 @@ import java.util.Iterator;
 
 /**
  * Created by belozovs on 7/15/2015.
+ * IssueChange event deserializer
  */
 public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> implements CommonDeserializerUtils {
 
-    private static String FIELD_KEY_NAME = "name";
-
     @Override
-    public IssueChangeEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public IssueChangeEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
         JsonNode node = jp.getCodec().readTree(jp);
 
@@ -48,7 +46,7 @@ public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> 
 
     private IssueField fetchIssueField(JsonNode fieldNode) {
         Iterator<String> subfieldNames = fieldNode.fieldNames();
-        JsonNode fieldNameNode = fieldNode.get(FIELD_KEY_NAME);
+        JsonNode fieldNameNode = fieldNode.get("name");
         if (fieldNameNode == null) {
             return null;
         }
@@ -57,6 +55,8 @@ public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> 
         while (subfieldNames.hasNext()) {
             String curSubFieldName = subfieldNames.next();
             switch (curSubFieldName.toLowerCase()) {
+                case "name":
+                    break;
                 case "to":
                     issueField.setTo(fieldNode.get(curSubFieldName).asText());
                     break;
@@ -67,9 +67,7 @@ public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> 
                     issueField.setTtc(fieldNode.get(curSubFieldName).asText());
                     break;
                 default:
-                    if(!curSubFieldName.equalsIgnoreCase(FIELD_KEY_NAME)) {
-                        issueField.addCustomField(curSubFieldName, fieldNode.get(curSubFieldName).asText());
-                    }
+                    issueField.addCustomField(curSubFieldName, fieldNode.get(curSubFieldName).asText());
                     break;
             }
         }
