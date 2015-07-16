@@ -1,0 +1,23 @@
+package com.hp.gaia.mgs.dto.testrun;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+/**
+ * Created by belozovs on 7/16/2015.
+ */
+@JsonDeserialize(using = TestRunDeserializer.class)
+public class CodeTestRunEvent  extends TestRunEvent{
+
+    public final static String EVENT_TYPE = "code_testrun";
+
+    TestRunResult result;
+
+    public TestRunResult getResult() {
+        return result;
+    }
+
+    @Override
+    public void setResult(TestRunResult result) {
+        this.result = result;
+    }
+}

@@ -1,7 +1,10 @@
 package com.hp.gaia.mgs.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.hp.gaia.mgs.dto.issuechange.IssueChangeEvent;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +15,8 @@ import java.util.Map;
  */
 @JsonDeserialize(using = MainEventDeserializer.class)
 public class BaseEvent {
+
+    public static String EVENT_TYPE;
 
     @JsonProperty("event")
     String type;
@@ -26,6 +31,10 @@ public class BaseEvent {
         tags = new HashMap<>();
         id = new HashMap<>();
 
+    }
+
+    public static String getEVENT_TYPE() {
+        return EVENT_TYPE;
     }
 
     public String getType() {

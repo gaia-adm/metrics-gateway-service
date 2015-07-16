@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface CommonDeserializerUtils {
 
-    public default void fillMap(Map<String, String> map, String mapType, JsonNode node){
+    public default int fillMap(Map<String, String> map, String mapType, JsonNode node){
 
         if(node.get(mapType) != null) {
             Iterator<Map.Entry<String, JsonNode>> fields = node.get(mapType).fields();
@@ -20,6 +20,8 @@ public interface CommonDeserializerUtils {
                 map.put(field.getKey(), field.getValue().asText());
             }
         }
+
+        return map.size();
     }
 
 }

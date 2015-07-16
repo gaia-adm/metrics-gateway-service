@@ -16,7 +16,7 @@ import java.util.Iterator;
  */
 public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> implements CommonDeserializerUtils {
 
-    private static String FIELD_NAME_NAME = "name";
+    private static String FIELD_KEY_NAME = "name";
 
     @Override
     public IssueChangeEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
@@ -48,7 +48,7 @@ public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> 
 
     private IssueField fetchIssueField(JsonNode fieldNode) {
         Iterator<String> subfieldNames = fieldNode.fieldNames();
-        JsonNode fieldNameNode = fieldNode.get(FIELD_NAME_NAME);
+        JsonNode fieldNameNode = fieldNode.get(FIELD_KEY_NAME);
         if (fieldNameNode == null) {
             return null;
         }
@@ -67,7 +67,7 @@ public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> 
                     issueField.setTtc(fieldNode.get(curSubFieldName).asText());
                     break;
                 default:
-                    if(!curSubFieldName.equalsIgnoreCase(FIELD_NAME_NAME)) {
+                    if(!curSubFieldName.equalsIgnoreCase(FIELD_KEY_NAME)) {
                         issueField.addCustomField(curSubFieldName, fieldNode.get(curSubFieldName).asText());
                     }
                     break;

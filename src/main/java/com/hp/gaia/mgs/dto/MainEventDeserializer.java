@@ -1,12 +1,10 @@
 package com.hp.gaia.mgs.dto;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.hp.gaia.mgs.dto.issuechange.IssueChangeEvent;
+import com.hp.gaia.mgs.dto.testrun.AlmTestRunEvent;
+import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
 import jersey.repackaged.com.google.common.collect.Lists;
 
 import java.io.IOException;
@@ -22,7 +20,7 @@ import java.util.List;
 public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> implements CommonDeserializerUtils {
 
     @Override
-    public List<BaseEvent> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public List<BaseEvent> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
         JsonNode node = jp.getCodec().readTree(jp);
         BaseEvent commonPart = new BaseEvent();
@@ -46,33 +44,45 @@ public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> imp
 
         List<JsonNode> points = Lists.newArrayList(node.get("points"));
 
-        for(int i = 0; i< points.size(); i++) {
+        for (JsonNode point : points) {
 
-            String pointType = (points.get(i).get("event") != null) ? points.get(i).get("event").asText() : commonPart.getType();
+            BaseEvent nextEvent = null;
+            //for each point, the event type can be different, so we should check it
+            String pointType = (point.get("event") != null) ? point.get("event").asText() : commonPart.getType();
             switch (pointType) {
                 case IssueChangeEvent.EVENT_TYPE:
-                    IssueChangeEvent ice = new ObjectMapper().readValue(points.get(i).toString(), IssueChangeEvent.class);
-                    if(ice.getSource().isEmpty()){
-                        ice.setSource(commonPart.getSource());
-                    }
-                    if(ice.getTags().isEmpty()){
-                        ice.setTags(commonPart.getTags());
-                    }
-                    if(ice.getId().isEmpty()){
-                        ice.setId(commonPart.getId());
-                    }
-                    if(ice.getTime() == null){
-                        ice.setTime(commonPart.getTime());
-                    }
-                    if(ice.getType() == null){
-                        ice.setType(pointType);
-                    }
-                    events.add(ice);
+                    nextEvent = new ObjectMapper().readValue(point.toString(), IssueChangeEvent.class);
+                    break;
+                case AlmTestRunEvent.EVENT_TYPE:
+                    nextEvent = new ObjectMapper().readValue(point.toString(), AlmTestRunEvent.class);
+                    break;
+                case CodeTestRunEvent.EVENT_TYPE:
+                    nextEvent = new ObjectMapper().readValue(point.toString(), CodeTestRunEvent.class);
                     break;
                 default:
                     System.out.println("No valid event type found: " + pointType);
                     break;
             }
+
+            if (nextEvent != null) {
+                if (nextEvent.getSource().isEmpty()) {
+                    nextEvent.setSource(commonPart.getSource());
+                }
+                if (nextEvent.getTags().isEmpty()) {
+                    nextEvent.setTags(commonPart.getTags());
+                }
+                if (nextEvent.getId().isEmpty()) {
+                    nextEvent.setId(commonPart.getId());
+                }
+                if (nextEvent.getTime() == null) {
+                    nextEvent.setTime(commonPart.getTime());
+                }
+                if (nextEvent.getType() == null) {
+                    nextEvent.setType(pointType);
+                }
+                events.add(nextEvent);
+            }
+
 
         }
 
