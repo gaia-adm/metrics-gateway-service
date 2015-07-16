@@ -1,6 +1,8 @@
 package com.hp.gaia.mgs.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.gaia.mgs.dto.BaseEvent;
 import com.hp.gaia.mgs.dto.Metric;
 import com.hp.gaia.mgs.services.MetricsCollectorService;
 import com.hp.gaia.mgs.services.PropertiesKeeperService;
@@ -131,10 +133,39 @@ public class MeasurementGatewayResource {
 
     @POST
     @Path("/event")
-    public void publishEvent(@Context HttpServletRequest request, @Suspended final AsyncResponse response, String jsonEvents) throws ExecutionException, InterruptedException {
+    public void publishEvent(@Context HttpServletRequest request, @Suspended final AsyncResponse response, String jsonEvents) throws ExecutionException, InterruptedException, IOException {
 
         Map tenantDetails = ((MultiTenantOAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getTenantDetails();
 
+
+        CompletableFuture.supplyAsync(() -> {
+            if (useAmqp) {
+                try {
+                    List<BaseEvent> result = (List<BaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + result.size());
+                    return null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage() ;
+                }
+            } else {
+                try {
+                    List<BaseEvent> result = (List<BaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + result.size());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }).handle((result, ex) -> {
+            if (result == null) {
+                return response.resume(Response.status(Response.Status.CREATED).entity(result).build());
+
+            } else {
+                return response.resume(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build());
+
+            }
+        });
 
 
     }

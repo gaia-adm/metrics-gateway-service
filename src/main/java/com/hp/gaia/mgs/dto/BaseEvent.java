@@ -1,6 +1,7 @@
 package com.hp.gaia.mgs.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 /**
  * Created by belozovs on 7/15/2015.
  */
+@JsonDeserialize(using = MainEventDeserializer.class)
 public class BaseEvent {
 
     @JsonProperty("event")

@@ -1,9 +1,9 @@
-package com.hp.gaia.mgs.dto;
+package com.hp.gaia.mgs.dto.issuechange;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.hp.gaia.mgs.dto.BaseEvent;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,18 +11,21 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 7/15/2015.
+ *
+ * No support for comments 
+ *
  */
 
 @JsonDeserialize(using = IssueChangeDeserializer.class)
 public class IssueChangeEvent extends BaseEvent {
 
-    private final static String ICE_TYPE = "issue_change";
+    public final static String EVENT_TYPE = "issue_change";
 
     @JsonProperty("fields")
     List<IssueField> fields;
 
     public IssueChangeEvent() {
-        type = ICE_TYPE;
+        this.setType(EVENT_TYPE);
         fields = new ArrayList<>();
     }
 
@@ -44,6 +47,7 @@ class IssueField {
     String to;
     String from;
     String ttc;
+    Map<String, String> customFields = new HashMap<>();
 
     public IssueField(String name) {
         this.name = name;
@@ -79,6 +83,18 @@ class IssueField {
 
     public void setTtc(String ttc) {
         this.ttc = ttc;
+    }
+
+    public Map<String, String> getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(Map<String, String> customFields) {
+        this.customFields = customFields;
+    }
+
+    public void addCustomField(String name, String value) {
+        customFields.put(name, value);
     }
 
 }
