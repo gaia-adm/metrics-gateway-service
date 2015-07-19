@@ -58,6 +58,7 @@
     </appender>
 
 
+<!--
     <logger name="com.hp.gaia.mgs.services.MetricsCollectorService" level="info" additivity="false">
         <appender-ref ref="storage" />
     </logger>
@@ -65,9 +66,11 @@
     <logger name="com.hp.gaia.mgs.services.MonitoringService" level="info" additivity="false">
         <appender-ref ref="monitoring" />
     </logger>
+-->
 
-    <logger name="com.hp.gaia.mgs" level="debug" additivity="false">
-        <appender-ref ref="mgs" />
+    <logger name="com.hp.gaia.mgs" level="info" additivity="false">
+        <!--<appender-ref ref="mgs" />-->
+        <appender-ref ref="STDOUT" />
     </logger>
 
     <logger name="org.springframework" level="error" additivity="false">

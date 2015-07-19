@@ -1,6 +1,9 @@
 package com.hp.gaia.mgs.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.gaia.mgs.dto.AbstractBaseEvent;
+import com.hp.gaia.mgs.dto.BaseEvent;
 import com.hp.gaia.mgs.dto.Metric;
 import com.hp.gaia.mgs.services.MetricsCollectorService;
 import com.hp.gaia.mgs.services.PropertiesKeeperService;
@@ -27,7 +30,6 @@ import java.util.concurrent.ExecutionException;
  * Created by belozovs on 5/21/2015.
  *
  */
-@Component
 @Path("/v1/gateway")
 public class MeasurementGatewayResource {
 
@@ -128,5 +130,47 @@ public class MeasurementGatewayResource {
         });
 
     }
+
+    @POST
+    @Path("/event")
+    public void publishEvent(@Context HttpServletRequest request, @Suspended final AsyncResponse response, String jsonEvents) throws ExecutionException, InterruptedException, IOException {
+
+        Map tenantDetails = ((MultiTenantOAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getTenantDetails();
+
+
+        CompletableFuture.supplyAsync(() -> {
+            if (useAmqp) {
+                try {
+                    List<AbstractBaseEvent> receivedEvents = (List<AbstractBaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + receivedEvents.size());
+                    metricsCollector.publishEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
+                    return null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage() ;
+                }
+            } else {
+                try {
+                    List<AbstractBaseEvent> receivedEvents = (List<AbstractBaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + receivedEvents.size());
+                    metricsCollector.storeEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }).handle((result, ex) -> {
+            if (result == null) {
+                return response.resume(Response.status(Response.Status.CREATED).entity(result).build());
+
+            } else {
+                return response.resume(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build());
+
+            }
+        });
+
+
+    }
+
 
 }
