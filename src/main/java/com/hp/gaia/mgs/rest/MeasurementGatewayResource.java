@@ -2,6 +2,7 @@ package com.hp.gaia.mgs.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.gaia.mgs.dto.AbstractBaseEvent;
 import com.hp.gaia.mgs.dto.BaseEvent;
 import com.hp.gaia.mgs.dto.Metric;
 import com.hp.gaia.mgs.services.MetricsCollectorService;
@@ -29,7 +30,6 @@ import java.util.concurrent.ExecutionException;
  * Created by belozovs on 5/21/2015.
  *
  */
-@Component
 @Path("/v1/gateway")
 public class MeasurementGatewayResource {
 
@@ -141,8 +141,9 @@ public class MeasurementGatewayResource {
         CompletableFuture.supplyAsync(() -> {
             if (useAmqp) {
                 try {
-                    List<BaseEvent> result = (List<BaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
-                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + result.size());
+                    List<AbstractBaseEvent> receivedEvents = (List<AbstractBaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + receivedEvents.size());
+                    metricsCollector.publishEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
                     return null;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -150,8 +151,9 @@ public class MeasurementGatewayResource {
                 }
             } else {
                 try {
-                    List<BaseEvent> result = (List<BaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
-                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + result.size());
+                    List<AbstractBaseEvent> receivedEvents = (List<AbstractBaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + receivedEvents.size());
+                    metricsCollector.storeEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
