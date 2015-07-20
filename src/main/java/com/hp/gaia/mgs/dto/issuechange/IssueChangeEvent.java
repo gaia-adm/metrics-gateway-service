@@ -26,10 +26,12 @@ public class IssueChangeEvent extends AbstractBaseEvent {
         fields = new ArrayList<>();
     }
 
+    @SuppressWarnings("unused")
     public List<IssueField> getFields() {
         return fields;
     }
 
+    @SuppressWarnings("unused")
     public void setFields(List<IssueField> fields) {
         this.fields = fields;
     }

@@ -54,9 +54,9 @@ class IssueField {
         return customFields;
     }
 
-    public void setCustomFields(Map<String, String> customFields) {
+/*    public void setCustomFields(Map<String, String> customFields) {
         this.customFields = customFields;
-    }
+    }*/
 
     public void addCustomField(String name, String value) {
         customFields.put(name, value);

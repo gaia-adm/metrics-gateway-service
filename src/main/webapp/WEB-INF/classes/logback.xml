@@ -68,7 +68,7 @@
     </logger>
 -->
 
-    <logger name="com.hp.gaia.mgs" level="info" additivity="false">
+    <logger name="com.hp.gaia.mgs" level="debug" additivity="false">
         <!--<appender-ref ref="mgs" />-->
         <appender-ref ref="STDOUT" />
     </logger>

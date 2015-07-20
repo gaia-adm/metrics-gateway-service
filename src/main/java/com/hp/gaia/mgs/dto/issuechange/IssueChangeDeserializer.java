@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.hp.gaia.mgs.dto.CommonDeserializerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.Date;
@@ -15,6 +18,8 @@ import java.util.Iterator;
  * IssueChange event deserializer
  */
 public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> implements CommonDeserializerUtils {
+
+    Logger logger = LoggerFactory.getLogger(IssueChangeDeserializer.class);
 
     @Override
     public IssueChangeEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
@@ -70,6 +75,11 @@ public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> 
                     issueField.addCustomField(curSubFieldName, fieldNode.get(curSubFieldName).asText());
                     break;
             }
+        }
+
+        if(StringUtils.isEmpty(issueField.getName()) || StringUtils.isEmpty(issueField.getTo())){
+            logger.error("Empty data provided for field 'name' or 'to' attribute: {}", fieldNode);
+            throw new RuntimeException("Incomplete data provided: 'name' and 'to' attributes are mandatory for all fields");
         }
 
         return issueField;

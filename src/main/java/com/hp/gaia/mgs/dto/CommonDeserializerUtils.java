@@ -1,17 +1,28 @@
 package com.hp.gaia.mgs.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.gaia.mgs.dto.issuechange.IssueChangeEvent;
+import com.hp.gaia.mgs.dto.testrun.AlmTestRunEvent;
+import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Created by belozovs on 7/16/2015.
+ *
+ * Utilities methods that can be useful for multiple types deserialization
  */
+
 
 public interface CommonDeserializerUtils {
 
-    public default int fillMap(Map<String, String> map, String mapType, JsonNode node){
+    /**
+     * Fill a map with data from mapType element of json node
+     */
+    default int fillMap(Map<String, String> map, String mapType, JsonNode node){
 
         if(node.get(mapType) != null) {
             Iterator<Map.Entry<String, JsonNode>> fields = node.get(mapType).fields();
@@ -20,8 +31,27 @@ public interface CommonDeserializerUtils {
                 map.put(field.getKey(), field.getValue().asText());
             }
         }
-
         return map.size();
+    }
+
+    default BaseEvent deserializeEvent(JsonNode point, String pointType) throws IOException {
+
+        BaseEvent nextEvent;
+        switch (pointType) {
+            case IssueChangeEvent.EVENT_TYPE:
+                nextEvent = new ObjectMapper().readValue(point.toString(), IssueChangeEvent.class);
+                break;
+            case AlmTestRunEvent.EVENT_TYPE:
+                nextEvent = new ObjectMapper().readValue(point.toString(), AlmTestRunEvent.class);
+                break;
+            case CodeTestRunEvent.EVENT_TYPE:
+                nextEvent = new ObjectMapper().readValue(point.toString(), CodeTestRunEvent.class);
+                break;
+            default:
+                System.out.println("No valid event type found: " + pointType);
+                throw new RuntimeException("No valid event type provided: " + pointType);
+        }
+        return nextEvent;
     }
 
 }

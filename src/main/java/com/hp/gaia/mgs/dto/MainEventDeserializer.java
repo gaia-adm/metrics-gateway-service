@@ -29,7 +29,7 @@ public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> imp
         //get points for further usage or fail immediately, if no points provided
         List<JsonNode> points = Lists.newArrayList(node.get("points"));
         if(points.isEmpty()){
-            throw new RuntimeException("empty");
+            throw new RuntimeException("No events provided");
         }
 
         if(node.get("id") != null){
@@ -50,24 +50,11 @@ public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> imp
 
         for (JsonNode point : points) {
 
-            BaseEvent nextEvent = null;
             //for each point, the event type can be different, so we should check it
             String pointType = (point.get("event") != null) ? point.get("event").asText() : commonPart.getType();
-            switch (pointType) {
-                case IssueChangeEvent.EVENT_TYPE:
-                    nextEvent = new ObjectMapper().readValue(point.toString(), IssueChangeEvent.class);
-                    break;
-                case AlmTestRunEvent.EVENT_TYPE:
-                    nextEvent = new ObjectMapper().readValue(point.toString(), AlmTestRunEvent.class);
-                    break;
-                case CodeTestRunEvent.EVENT_TYPE:
-                    nextEvent = new ObjectMapper().readValue(point.toString(), CodeTestRunEvent.class);
-                    break;
-                default:
-                    System.out.println("No valid event type found: " + pointType);
-                    break;
-            }
-
+            //deserialization
+            BaseEvent nextEvent = deserializeEvent(point, pointType);
+            //Enrich event with "common" data (common for all events in the request), if relevant section inside the event is empty
             if (nextEvent != null) {
                 if (nextEvent.getSource().isEmpty()) {
                     nextEvent.setSource(commonPart.getSource());
@@ -86,7 +73,6 @@ public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> imp
                 }
                 events.add(nextEvent);
             }
-
 
         }
 

@@ -73,13 +73,59 @@ public class MetricsCollectorService {
      * @param tenantId - tenant id reported the events
      */
     public <T extends AbstractBaseEvent> void storeEvent(Collection<T> events, String tenantId) {
-        logger.info("Tenant " + tenantId + " received " + events.size() + " events");
+
+        logger.info("Going to publish {} events for tenant {}.", events.size(), tenantId);
+
+        for (T event : events) {
+
+            StringBuffer mainSb = new StringBuffer();
+            //tags and source
+            mainSb.append(escapedString(event.getType()));
+            for (String key : event.getSource().keySet()) {
+                mainSb.append(",").append(escapedString(key)).append("=").append(escapedString(event.getSource().get(key)));
+            }
+            for (String key : event.getTags().keySet()) {
+                mainSb.append(",").append(escapedString(key)).append("=").append(escapedString(event.getTags().get(key)));
+            }
+
+            StringBuffer valuesSb = new StringBuffer();
+            //id and values (fields, result, etc.)
+            for (String key : event.getId().keySet()) {
+                //note: id value is always String and should be quoted (at least thanks to id_ prefix)
+                valuesSb.append(escapedString(key)).append("=").append(quoteValue("id_" + event.getId().get(key))).append(",");
+            }
+            for (String key : event.getValues().keySet()) {
+                if (event.getValues().get(key).getClass().equals(java.lang.String.class)) {
+                    //double quote value if its type is String
+                    valuesSb.append(escapedString(key)).append("=").append(quoteValue((String) event.getValues().get(key))).append(",");
+                } else {
+                    valuesSb.append(escapedString(key)).append("=").append(event.getValues().get(key)).append(",");
+                }
+            }
+            if (valuesSb.length() > 0 && valuesSb.charAt(valuesSb.length() - 1) == ',') {
+                valuesSb.setLength(valuesSb.length() - 1);
+            }
+            //add timestamp
+            //TBD - boris: make InfluxDBManager in event-indexer adding &precision=ms query param to "writeToDB" URL and remove 1000000 from here
+            valuesSb.append(" ").append(event.getTime().getTime());
+
+            String result = mainSb.append(" ").append(valuesSb).toString();
+
+            logger.debug("Publishing event for tenant {}: {}: ", tenantId, result);
+
+
+
+        }
+        logger.info("Successfully published {} events for tenant {}.", events.size(), tenantId);
     }
 
     /**
      * Translate json formatted input to InfluxDB line protocol (https://influxdb.com/docs/v0.9/write_protocols/write_syntax.html) and publish to the system
      * InfluxDB line protocol requires the following format: [key] [fields] [timestamp]
-     * For example: cpu,host=server\ 01,region=us-west cpu load=10.0,alert=true,reason="value above maximum threshold" 1434055562005000035
+     * For example: cpu,host=server\ 01,region=us-west cpu load=10.0,alert=true,reason="value above maximum threshold" 1434055562005
+     * NOTE: timestamp is in milliseconds, so inserting data to InfluxDB requires precision=ms parameter (default is nanoseconds)
+     *
+     * Multiple events are published one by one to RabbitMQ.
      *
      * @param events   - List of input events (json); events must extend {@link com.hp.gaia.mgs.dto.AbstractBaseEvent}
      * @param tenantId - tenant id reported the events
