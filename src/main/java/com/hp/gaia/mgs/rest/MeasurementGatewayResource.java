@@ -154,10 +154,11 @@ public class MeasurementGatewayResource {
                     List<AbstractBaseEvent> receivedEvents = (List<AbstractBaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
                     System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + receivedEvents.size());
                     metricsCollector.storeEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
-                } catch (IOException e) {
+                    return null;
+                } catch (Exception e) {
                     e.printStackTrace();
+                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage() ;
                 }
-                return null;
             }
         }).handle((result, ex) -> {
             if (result == null) {

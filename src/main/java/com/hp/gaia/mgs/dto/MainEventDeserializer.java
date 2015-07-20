@@ -26,6 +26,12 @@ public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> imp
         BaseEvent commonPart = new BaseEvent();
         List<BaseEvent> events = new ArrayList<>();
 
+        //get points for further usage or fail immediately, if no points provided
+        List<JsonNode> points = Lists.newArrayList(node.get("points"));
+        if(points.isEmpty()){
+            throw new RuntimeException("empty");
+        }
+
         if(node.get("id") != null){
             fillMap(commonPart.getId(), "id", node);
         }
@@ -41,8 +47,6 @@ public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> imp
         if(node.get("event") != null){
             commonPart.setType(node.get("event").asText());
         }
-
-        List<JsonNode> points = Lists.newArrayList(node.get("points"));
 
         for (JsonNode point : points) {
 
