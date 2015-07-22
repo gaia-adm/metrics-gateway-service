@@ -25,7 +25,7 @@ public class MetricsCollectorService {
     private final static Logger logger = LoggerFactory.getLogger(MetricsCollectorService.class);
 
     private final static String DB_NAME_PROPERTY = "dbname";
-    private AmqpManager amqpManager;
+    AmqpManager amqpManager;
 
     public MetricsCollectorService() throws IOException {
         this.amqpManager = new AmqpManager();
@@ -176,9 +176,9 @@ public class MetricsCollectorService {
 
             String result = mainSb.append(" ").append(valuesSb).toString();
 
-            logger.debug("Publishing event for tenant {}: {}: ", tenantId, result);
+            logger.debug("Publishing event for tenant {}: {}. ", tenantId, result);
             amqpManager.getChannel().basicPublish("", amqpManager.getQueueName(), propsBuilder.build(), result.getBytes());
-            logger.debug(" [v] Sent event for tenant {} ", tenantId);
+            logger.debug(" [v] Sent event for tenant {}. ", tenantId);
 
 
 
