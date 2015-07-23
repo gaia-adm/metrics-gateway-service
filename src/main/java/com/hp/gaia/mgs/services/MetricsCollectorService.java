@@ -31,7 +31,7 @@ public class MetricsCollectorService {
     String basedir = System.getProperty("user.dir");
 
 
-    public void storeMetric(Metric m) {
+    public void storeMetric(OldMetric m) {
 
         String name = m.getName();
         String category = m.getCategory();
@@ -39,10 +39,10 @@ public class MetricsCollectorService {
         String source = m.getSource();
         Long timestamp = m.getTimestamp();
         List<String> tags = m.getTags();
-        List<Event> events = m.getEvents();
-        List<Measurement> measurements = m.getMeasurements();
+        List<OldEvent> events = m.getEvents();
+        List<OldMeasurement> measurements = m.getMeasurements();
 
-        logger.info("Metric received: {}", name);
+        logger.info("OldMetric received: {}", name);
     }
 
     public void storeMetric(String thingToPrint) {
@@ -67,10 +67,10 @@ public class MetricsCollectorService {
      * Test method that can be used for running the service locally.
      * Method just prints some data to STDOUT instead of publishing it to RabbitMQ in the full blown system
      *
-     * @param events   - List of input events (json); events must extend {@link com.hp.gaia.mgs.dto.AbstractBaseEvent}
+     * @param events   - List of input events (json); events must extend {@link com.hp.gaia.mgs.dto.BaseEvent}
      * @param tenantId - tenant id reported the events
      */
-    public <T extends AbstractBaseEvent> void storeEvent(Collection<T> events, String tenantId) {
+    public <T extends BaseEvent> void storeEvent(Collection<T> events, String tenantId) {
 
         logger.info("Going to publish {} events for tenant {}.", events.size(), tenantId);
 
@@ -95,12 +95,12 @@ public class MetricsCollectorService {
      * <p>
      * Multiple events are published one by one to RabbitMQ.
      *
-     * @param events   - List of input events (json); events must extend {@link com.hp.gaia.mgs.dto.AbstractBaseEvent}
+     * @param events   - List of input events (json); events must extend {@link com.hp.gaia.mgs.dto.BaseEvent}
      * @param tenantId - tenant id reported the events
      * @throws JsonProcessingException
-     * @see com.hp.gaia.mgs.dto.AbstractBaseEvent
+     * @see com.hp.gaia.mgs.dto.BaseEvent
      */
-    public <T extends AbstractBaseEvent> void publishEvent(Collection<T> events, String tenantId) throws IOException, TimeoutException {
+    public <T extends BaseEvent> void publishEvent(Collection<T> events, String tenantId) throws IOException, TimeoutException {
 
         logger.info("Going to publish {} events for tenant {}.", events.size(), tenantId);
 

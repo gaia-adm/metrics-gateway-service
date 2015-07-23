@@ -2,7 +2,7 @@ package com.hp.gaia.mgs.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.gaia.mgs.dto.issuechange.IssueChangeEvent;
+import com.hp.gaia.mgs.dto.change.IssueChangeEvent;
 import com.hp.gaia.mgs.dto.testrun.AlmTestRunEvent;
 import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
 
@@ -34,6 +34,17 @@ public interface CommonDeserializerUtils {
         return map.size();
     }
 
+
+    /**
+     * Deserialize event with custom deserializer
+     * Custom deserializer is selected based on the event type its type
+     * If no valid event type found, exception thrown
+     *
+     * @param point json for deserialization
+     * @param pointType type to use for deserialization
+     * @return event of one of the types extending BaseEvent
+     * @throws IOException in case of deserialization problem
+     */
     default BaseEvent deserializeEvent(JsonNode point, String pointType) throws IOException {
 
         BaseEvent nextEvent;

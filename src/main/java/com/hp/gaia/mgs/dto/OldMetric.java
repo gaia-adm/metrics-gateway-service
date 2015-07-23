@@ -8,7 +8,7 @@ import java.util.List;
  */
 
 
-public class Metric {
+public class OldMetric {
 
     String metric;
     String category;
@@ -16,8 +16,8 @@ public class Metric {
     String source;
     Long timestamp;
     List<String> tags = new ArrayList<>();
-    List<Measurement> measurements = new ArrayList<>();
-    List<Event> events = new ArrayList<>();
+    List<OldMeasurement> measurements = new ArrayList<>();
+    List<OldEvent> events = new ArrayList<>();
 
     public String getMetric() {
         return metric;
@@ -67,19 +67,19 @@ public class Metric {
         this.tags = tags;
     }
 
-    public List<Measurement> getMeasurements() {
+    public List<OldMeasurement> getMeasurements() {
         return measurements;
     }
 
-    public void setMeasurements(List<Measurement> measurements) {
+    public void setMeasurements(List<OldMeasurement> measurements) {
         this.measurements = measurements;
     }
 
-    public List<Event> getEvents() {
+    public List<OldEvent> getEvents() {
         return events;
     }
 
-    public void setEvents(List<Event> events) {
+    public void setEvents(List<OldEvent> events) {
         this.events = events;
     }
 }

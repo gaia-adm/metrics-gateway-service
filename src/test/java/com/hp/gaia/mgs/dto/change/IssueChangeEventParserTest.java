@@ -1,7 +1,6 @@
-package com.hp.gaia.mgs.dto.issuechange;
+package com.hp.gaia.mgs.dto.change;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.gaia.mgs.dto.issuechange.IssueChangeEvent;
 import org.junit.Before;
 import org.junit.Test;
 

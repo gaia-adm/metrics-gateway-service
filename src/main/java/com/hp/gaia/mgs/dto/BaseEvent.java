@@ -9,10 +9,15 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 7/15/2015.
+ *
+ * Base class for all kinds of events
+ *
  */
 @JsonDeserialize(using = MainEventDeserializer.class)
 public class BaseEvent {
 
+    //EVENT_TYPE is not used here directly but needed for using with generic code
+    @SuppressWarnings("unused")
     public static String EVENT_TYPE;
 
     @JsonProperty("event")

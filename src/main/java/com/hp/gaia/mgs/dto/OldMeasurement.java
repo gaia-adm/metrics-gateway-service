@@ -3,10 +3,10 @@ package com.hp.gaia.mgs.dto;
 /**
  * Created by belozovs on 5/27/2015.
  */
-public class Event {
+public class OldMeasurement {
 
     String name;
-    String value;
+    Double value;
 
     public String getName() {
         return name;
@@ -16,11 +16,13 @@ public class Event {
         this.name = name;
     }
 
-    public String getValue() {
+
+
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 }

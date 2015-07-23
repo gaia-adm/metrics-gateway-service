@@ -1,4 +1,4 @@
-package com.hp.gaia.mgs.dto.issuechange;
+package com.hp.gaia.mgs.dto.change;
 
 
 import com.hp.gaia.mgs.dto.InfluxLineProtocolConverter;
@@ -15,7 +15,7 @@ public class IssueChangeToInfluxLineProtocol implements InfluxLineProtocolConver
      * For each field separate line create with all its attributes as values and field name as a tag (beside other tags and source)
      * Example of the output (single row):
      * issue_change,server=http://alm-saas.hp.com,domain=IT,project=Project\ A,workspace=CRM,user=bob,field=Status id_uid="1111",to="Open",from="New",ttc=124 1437595557534000000
-     * @param event
+     * @param event event to be converted
      * @return row to be inserted to InfluxDB
      *
      */

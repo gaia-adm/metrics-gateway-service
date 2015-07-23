@@ -6,6 +6,8 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 7/16/2015.
+ *
+ * Version of TestRunResult for ALM - includes test steps
  */
 public class AlmTestRunResult extends TestRunResult {
 
@@ -14,10 +16,6 @@ public class AlmTestRunResult extends TestRunResult {
     @Override
     public List<Map<String, Object>> getSteps() {
         return steps;
-    }
-
-    public void setSteps(List<Map<String, Object>> steps) {
-        this.steps = steps;
     }
 
     public void addStep(Map<String, Object> step) {

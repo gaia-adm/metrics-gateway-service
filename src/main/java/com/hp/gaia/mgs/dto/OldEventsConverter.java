@@ -3,7 +3,7 @@ package com.hp.gaia.mgs.dto;
 /**
  * Created by belozovs on 7/19/2015.
  */
-public class EventsConverter {
+public class OldEventsConverter {
 
     public static <T extends BaseEvent> T convert(Object from, Class<? extends BaseEvent> to){
 

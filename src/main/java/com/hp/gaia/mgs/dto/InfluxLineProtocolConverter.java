@@ -2,8 +2,9 @@ package com.hp.gaia.mgs.dto;
 
 /**
  * Created by belozovs on 7/22/2015.
+ * Interface for converting event to InfluxDB 0.9 line protocol format
  */
-public interface InfluxLineProtocolConverter <T extends AbstractBaseEvent>{
+public interface InfluxLineProtocolConverter <T extends BaseEvent>{
 
     String convert(T event);
 

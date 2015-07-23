@@ -4,6 +4,7 @@ import java.util.*;
 
 /**
  * Created by belozovs on 7/16/2015.
+ * Base class for all kinds of TestRunResults: either manual (ALM) or automatic test
  */
 class TestRunResult {
 
@@ -40,14 +41,7 @@ class TestRunResult {
         return customFields;
     }
 
-    public void setCustomFields(Map<String, Object> customFields) {
-        this.customFields = customFields;
-    }
-
-    public void addCustomField(String name, Object value){
-        customFields.put(name, value);
-    }
-
+    @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getSteps(){
         return new ArrayList();
     }

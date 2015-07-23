@@ -1,8 +1,8 @@
 package com.hp.gaia.mgs.services;
 
 import com.hp.gaia.mgs.amqp.AmqpManager;
-import com.hp.gaia.mgs.dto.issuechange.IssueChangeEvent;
-import com.hp.gaia.mgs.dto.issuechange.IssueChangeToInfluxLineProtocol;
+import com.hp.gaia.mgs.dto.change.IssueChangeEvent;
+import com.hp.gaia.mgs.dto.change.IssueChangeToInfluxLineProtocol;
 import com.rabbitmq.client.Channel;
 import org.junit.Before;
 import org.junit.Test;

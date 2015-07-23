@@ -1,10 +1,11 @@
-package com.hp.gaia.mgs.dto.issuechange;
+package com.hp.gaia.mgs.dto.change;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by belozovs on 7/16/2015.
+ * Field of IssueChangeEvent
  */
 public class IssueField {
 
@@ -53,10 +54,6 @@ public class IssueField {
     public Map<String, String> getCustomFields() {
         return customFields;
     }
-
-/*    public void setCustomFields(Map<String, String> customFields) {
-        this.customFields = customFields;
-    }*/
 
     public void addCustomField(String name, String value) {
         customFields.put(name, value);

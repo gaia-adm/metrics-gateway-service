@@ -2,9 +2,6 @@ package com.hp.gaia.mgs.dto;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
-import com.hp.gaia.mgs.dto.issuechange.IssueChangeEvent;
-import com.hp.gaia.mgs.dto.testrun.AlmTestRunEvent;
-import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
 import jersey.repackaged.com.google.common.collect.Lists;
 
 import java.io.IOException;

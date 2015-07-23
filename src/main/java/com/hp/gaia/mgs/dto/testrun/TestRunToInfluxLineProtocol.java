@@ -88,37 +88,6 @@ public class TestRunToInfluxLineProtocol implements InfluxLineProtocolConverter<
                 mainSb.append(System.lineSeparator());
             }
         }
-
-
-
-/*
-        //add steps if presented
-        AlmTestRunResult almTestRunResult = (AlmTestRunResult) testResult;
-        if(event.getType().equals(AlmTestRunEvent.EVENT_TYPE) && ((AlmTestRunResult)testResult).getSteps() != null && !((AlmTestRunResult)testResult).getSteps().isEmpty()){
-            int i=0;
-            for(Map<String, Object> stepMap : ((AlmTestRunResult)testResult).getSteps()){
-                for(String key : stepMap.keySet()){
-                    if(stepMap.get(key).getClass().equals(java.lang.String.class)){
-                        mainSb.append("step").append(i).append("_").append(getEscapedString(key)).append("=").append(getQuotedValue((String) stepMap.get(key))).append(",");
-                    } else {
-                        mainSb.append("step").append(i).append("_").append(getEscapedString(key)).append("=").append(stepMap.get(key)).append(",");
-                    }
-                }
-                i++;
-            }
-        }
-
-        if (mainSb.length() > 0 && mainSb.charAt(mainSb.length() - 1) == ',') {
-            mainSb.setLength(mainSb.length() - 1);
-        }
-        //add timestamp
-        //TBD - boris: make InfluxDBManager in event-indexer adding &precision=ms query param to "writeToDB" URL and remove 1000000 from here
-        mainSb.append(" ").append(event.getTime().getTime() * 1000000); //switch to nanoseconds, as InfluxDB requires
-
-        //prepare to the next row insert
-        mainSb.append(System.lineSeparator());
-*/
-
         return mainSb.toString();
     }
 

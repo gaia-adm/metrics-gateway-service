@@ -2,14 +2,12 @@ package com.hp.gaia.mgs.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.gaia.mgs.dto.AbstractBaseEvent;
 import com.hp.gaia.mgs.dto.BaseEvent;
-import com.hp.gaia.mgs.dto.Metric;
+import com.hp.gaia.mgs.dto.OldMetric;
 import com.hp.gaia.mgs.services.MetricsCollectorService;
 import com.hp.gaia.mgs.services.PropertiesKeeperService;
 import com.hp.gaia.mgs.spring.MultiTenantOAuth2Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -28,19 +26,19 @@ import java.util.concurrent.ExecutionException;
 
 /**
  * Created by belozovs on 5/21/2015.
- *
+ * Endpoint to get the collected events of all type
  */
 @Path("/v1/gateway")
 public class MeasurementGatewayResource {
 
-    MetricsCollectorService metricsCollector  = new MetricsCollectorService();
+    MetricsCollectorService metricsCollector = new MetricsCollectorService();
 
 
     private Boolean useAmqp = Boolean.valueOf(PropertiesKeeperService.getInstance().getEnvOrPropAsString("useAmqp"));
 
     public MeasurementGatewayResource() throws IOException {
         System.out.println("useAmqp flag is " + useAmqp);
-        if(useAmqp){
+        if (useAmqp) {
             System.out.println("Metrics will be published to RabbitMQ");
         } else {
             System.out.println("Metrics will be published to log file");
@@ -52,11 +50,11 @@ public class MeasurementGatewayResource {
     @Path("/publish")
     @Consumes("application/json")
     @Produces("application/json")
-    public void publishMetricAsync(@Context HttpServletRequest request, @Suspended final AsyncResponse response, List<Metric> metrics) {
+    public void publishMetricAsync(@Context HttpServletRequest request, @Suspended final AsyncResponse response, List<OldMetric> metrics) {
 
 
         CompletableFuture.runAsync(() -> {
-            for (Metric metric : metrics) {
+            for (OldMetric metric : metrics) {
                 metricsCollector.storeMetric(metric);
             }
         }).thenApply((result) -> response.resume(Response.status(Response.Status.CREATED).entity(result).build()));
@@ -113,7 +111,7 @@ public class MeasurementGatewayResource {
                     return null;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage() ;
+                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage();
                 }
             } else {
                 metricsCollector.storeMetric(jsonMetrics, (Integer) tenantDetails.get("tenantId"));
@@ -121,7 +119,7 @@ public class MeasurementGatewayResource {
             }
         }).handle((result, ex) -> {
             if (result == null) {
-                return response.resume(Response.status(Response.Status.CREATED).entity(result).build());
+                return response.resume(Response.status(Response.Status.CREATED).build());
 
             } else {
                 return response.resume(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build());
@@ -141,28 +139,28 @@ public class MeasurementGatewayResource {
         CompletableFuture.supplyAsync(() -> {
             if (useAmqp) {
                 try {
-                    List<AbstractBaseEvent> receivedEvents = (List<AbstractBaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
-                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + receivedEvents.size());
+                    List<BaseEvent> receivedEvents = (List<BaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    System.out.println("Tenant " + tenantDetails.get("tenantId") + " Got result, number of points: " + receivedEvents.size());
                     metricsCollector.publishEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
                     return null;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage() ;
+                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage();
                 }
             } else {
                 try {
-                    List<AbstractBaseEvent> receivedEvents = (List<AbstractBaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
-                    System.out.println("Tenant "+ tenantDetails.get("tenantId")+ " Got result, number of points: " + receivedEvents.size());
+                    List<BaseEvent> receivedEvents = (List<BaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    System.out.println("Tenant " + tenantDetails.get("tenantId") + " Got result, number of points: " + receivedEvents.size());
                     metricsCollector.storeEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
                     return null;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage() ;
+                    return (e.getMessage() == null) ? e.getClass().getName() : e.getMessage();
                 }
             }
         }).handle((result, ex) -> {
             if (result == null) {
-                return response.resume(Response.status(Response.Status.CREATED).entity(result).build());
+                return response.resume(Response.status(Response.Status.CREATED).build());
 
             } else {
                 return response.resume(Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(result).build());

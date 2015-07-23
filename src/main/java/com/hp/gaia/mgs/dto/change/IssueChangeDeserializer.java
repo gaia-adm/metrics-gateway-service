@@ -1,4 +1,4 @@
-package com.hp.gaia.mgs.dto.issuechange;
+package com.hp.gaia.mgs.dto.change;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
