@@ -20,7 +20,7 @@ import java.util.Iterator;
 public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> implements CommonDeserializerUtils {
 
     Logger logger = LoggerFactory.getLogger(IssueChangeDeserializer.class);
-
+    //TODO - Boris: comments support
     @Override
     public IssueChangeEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
@@ -69,7 +69,7 @@ public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> 
                     issueField.setFrom(fieldNode.get(curSubFieldName).asText());
                     break;
                 case "ttc":
-                    issueField.setTtc(fieldNode.get(curSubFieldName).asText());
+                    issueField.setTtc(fieldNode.get(curSubFieldName).asLong());
                     break;
                 default:
                     issueField.addCustomField(curSubFieldName, fieldNode.get(curSubFieldName).asText());

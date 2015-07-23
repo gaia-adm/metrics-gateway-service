@@ -9,19 +9,20 @@ import java.util.Map;
  */
 public class AlmTestRunResult extends TestRunResult {
 
-        List<Map<String, Object>> steps = new ArrayList<>();
+    List<Map<String, Object>> steps = new ArrayList<>();
 
-        public List<Map<String, Object>> getSteps() {
-            return steps;
-        }
+    @Override
+    public List<Map<String, Object>> getSteps() {
+        return steps;
+    }
 
-        public void setSteps(List<Map<String, Object>> steps) {
-            this.steps = steps;
-        }
+    public void setSteps(List<Map<String, Object>> steps) {
+        this.steps = steps;
+    }
 
-        public void addStep(Map<String, Object> step) {
-            steps.add(step);
-        }
+    public void addStep(Map<String, Object> step) {
+        steps.add(step);
+    }
 
 
 }

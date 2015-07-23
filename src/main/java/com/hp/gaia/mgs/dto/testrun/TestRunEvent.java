@@ -12,4 +12,6 @@ public abstract class TestRunEvent extends AbstractBaseEvent{
 
     public abstract <T extends TestRunResult> void setResult(T result);
 
+    public abstract <T extends TestRunResult> T getResult();
+
 }

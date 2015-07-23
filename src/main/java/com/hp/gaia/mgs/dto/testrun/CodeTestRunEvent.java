@@ -15,6 +15,7 @@ public class CodeTestRunEvent extends TestRunEvent {
 
     TestRunResult result;
 
+    @Override
     public TestRunResult getResult() {
         return result;
     }

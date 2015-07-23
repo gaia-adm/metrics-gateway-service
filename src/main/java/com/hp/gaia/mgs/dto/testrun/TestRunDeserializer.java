@@ -97,7 +97,7 @@ public class TestRunDeserializer extends StdDeserializer<TestRunEvent> implement
                         }
                         break;
                     default:
-                        atrr.getCustomFields().put(fieldName, resultNode.get(fieldName).asText());
+                        atrr.getCustomFields().put(fieldName, resultNode.get(fieldName));
                         break;
                 }
             }

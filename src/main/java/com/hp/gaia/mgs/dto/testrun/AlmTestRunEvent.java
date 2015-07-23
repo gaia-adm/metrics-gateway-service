@@ -20,6 +20,7 @@ public class AlmTestRunEvent extends TestRunEvent {
         this.setType(EVENT_TYPE);
     }
 
+    @Override
     public AlmTestRunResult getResult() {
         return result;
     }

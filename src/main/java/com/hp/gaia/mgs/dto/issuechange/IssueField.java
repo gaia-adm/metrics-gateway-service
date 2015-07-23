@@ -6,12 +6,12 @@ import java.util.Map;
 /**
  * Created by belozovs on 7/16/2015.
  */
-class IssueField {
+public class IssueField {
 
     String name;
     String to;
     String from;
-    String ttc;
+    Long ttc;
     Map<String, String> customFields = new HashMap<>();
 
     public IssueField(String name) {
@@ -42,11 +42,11 @@ class IssueField {
         this.from = from;
     }
 
-    public String getTtc() {
+    public Long getTtc() {
         return ttc;
     }
 
-    public void setTtc(String ttc) {
+    public void setTtc(Long ttc) {
         this.ttc = ttc;
     }
 

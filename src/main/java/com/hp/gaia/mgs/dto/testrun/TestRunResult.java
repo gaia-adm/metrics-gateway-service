@@ -1,7 +1,6 @@
 package com.hp.gaia.mgs.dto.testrun;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by belozovs on 7/16/2015.
@@ -47,5 +46,9 @@ class TestRunResult {
 
     public void addCustomField(String name, Object value){
         customFields.put(name, value);
+    }
+
+    public List<Map<String, Object>> getSteps(){
+        return new ArrayList();
     }
 }

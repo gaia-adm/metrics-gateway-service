@@ -26,7 +26,6 @@ public class IssueChangeEvent extends AbstractBaseEvent {
         fields = new ArrayList<>();
     }
 
-    @SuppressWarnings("unused")
     public List<IssueField> getFields() {
         return fields;
     }

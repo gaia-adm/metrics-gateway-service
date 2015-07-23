@@ -2,6 +2,7 @@ package com.hp.gaia.mgs.services;
 
 import com.hp.gaia.mgs.amqp.AmqpManager;
 import com.hp.gaia.mgs.dto.issuechange.IssueChangeEvent;
+import com.hp.gaia.mgs.dto.issuechange.IssueChangeToInfluxLineProtocol;
 import com.rabbitmq.client.Channel;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,12 +34,12 @@ public class MetricsCollectorServiceTest {
 
     @Test
     public void testEscapedString() throws Exception {
-        assertEquals("my\\ do\\\"uble\\ quoted\\ string\\ part\\ 1\\,\\ part\\ 2", mcs.escapedString("my do\"uble quoted string part 1, part 2"));
+        assertEquals("my\\ do\\\"uble\\ quoted\\ string\\ part\\ 1\\,\\ part\\ 2", new IssueChangeToInfluxLineProtocol().getEscapedString("my do\"uble quoted string part 1, part 2"));
     }
 
     @Test
     public void testQuoteString() throws Exception {
-        assertEquals("\"str\"", mcs.quoteValue("str"));
+        assertEquals("\"str\"", new IssueChangeToInfluxLineProtocol().getQuotedValue("str"));
     }
 
     @Test
@@ -59,10 +60,12 @@ public class MetricsCollectorServiceTest {
     private IssueChangeEvent createIssueChangeEvent(String prefix) {
 
         IssueChangeEvent ice = spy(IssueChangeEvent.class);
+/*
         Map<String, Object> valuesMap = new HashMap<>();
         valuesMap.put(prefix+"_numeric", 25);
         valuesMap.put(prefix + "_string", "25");
         when(ice.getValues()).thenReturn(valuesMap);
+*/
         ice.setTime(new Date());
         ice.setType(IssueChangeEvent.EVENT_TYPE);
         ice.setId(Collections.singletonMap("uuid", prefix));
