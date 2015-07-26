@@ -14,6 +14,10 @@ public class CodeTestRunEvent extends TestRunEvent {
 
     TestRunResult result;
 
+    public CodeTestRunEvent() {
+        this.setType(EVENT_TYPE);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public TestRunResult getResult() {

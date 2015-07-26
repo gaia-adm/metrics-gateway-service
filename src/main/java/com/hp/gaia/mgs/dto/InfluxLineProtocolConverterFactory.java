@@ -2,6 +2,8 @@ package com.hp.gaia.mgs.dto;
 
 import com.hp.gaia.mgs.dto.change.IssueChangeEvent;
 import com.hp.gaia.mgs.dto.change.IssueChangeToInfluxLineProtocol;
+import com.hp.gaia.mgs.dto.commit.CodeCommitEvent;
+import com.hp.gaia.mgs.dto.commit.CodeCommitToInfluxLineProtocol;
 import com.hp.gaia.mgs.dto.testrun.*;
 
 /**
@@ -20,7 +22,10 @@ public class InfluxLineProtocolConverterFactory {
         if (type.equals(AlmTestRunEvent.EVENT_TYPE)){
             return new TestRunToInfluxLineProtocol();
         }
-        throw new RuntimeException("OldEvent type not supported: " + type);
+        if (type.equals(CodeCommitEvent.EVENT_TYPE)){
+            return new CodeCommitToInfluxLineProtocol();
+        }
+        throw new RuntimeException("Event type not supported: " + type);
     }
 
 }

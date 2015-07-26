@@ -25,7 +25,7 @@ public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> imp
 
         //get points for further usage or fail immediately, if no points provided
         List<JsonNode> points = Lists.newArrayList(node.get("points"));
-        if(points.isEmpty()){
+        if(points == null || points.isEmpty()){
             throw new RuntimeException("No events provided");
         }
 

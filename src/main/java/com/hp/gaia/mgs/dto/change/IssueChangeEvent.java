@@ -21,6 +21,8 @@ public class IssueChangeEvent extends BaseEvent {
     @NotNull
     List<IssueField> fields;
 
+    //TODO - boris: comments - like steps in TestRunEvent, with no group by
+
     public IssueChangeEvent() {
         this.setType(EVENT_TYPE);
         fields = new ArrayList<>();

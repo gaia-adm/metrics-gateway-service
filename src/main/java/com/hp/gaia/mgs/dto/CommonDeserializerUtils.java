@@ -3,6 +3,7 @@ package com.hp.gaia.mgs.dto;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.gaia.mgs.dto.change.IssueChangeEvent;
+import com.hp.gaia.mgs.dto.commit.CodeCommitEvent;
 import com.hp.gaia.mgs.dto.testrun.AlmTestRunEvent;
 import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
 
@@ -57,6 +58,9 @@ public interface CommonDeserializerUtils {
                 break;
             case CodeTestRunEvent.EVENT_TYPE:
                 nextEvent = new ObjectMapper().readValue(point.toString(), CodeTestRunEvent.class);
+                break;
+            case CodeCommitEvent.EVENT_TYPE:
+                nextEvent = new ObjectMapper().readValue(point.toString(), CodeCommitEvent.class);
                 break;
             default:
                 System.out.println("No valid event type found: " + pointType);
