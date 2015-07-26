@@ -15,9 +15,9 @@ public class IssueChangeToInfluxLineProtocol implements InfluxLineProtocolConver
      * For each field separate line created with all its attributes as values and field name as a tag (beside other tags and source)
      * Example of the output (single row):
      * issue_change,server=http://alm-saas.hp.com,domain=IT,project=Project\ A,workspace=CRM,user=bob,field=Status id_uid="1111",to="Open",from="New",ttc=124 1437595557534000000
+     *
      * @param event event to be converted
      * @return row to be inserted to InfluxDB
-     *
      */
     @Override
     public String convert(IssueChangeEvent event) {
@@ -58,9 +58,8 @@ public class IssueChangeToInfluxLineProtocol implements InfluxLineProtocolConver
             if (mainSb.length() > 0 && mainSb.charAt(mainSb.length() - 1) == ',') {
                 mainSb.setLength(mainSb.length() - 1);
             }
-            //add timestamp
-            //TBD - boris: make InfluxDBManager in event-indexer adding &precision=ms query param to "writeToDB" URL and remove 1000000 from here
-            mainSb.append(" ").append(event.getTime().getTime() * 1000000); //switch to nanoseconds, as InfluxDB requires
+            //add timestamp that is built to prevent duplicate timestamps
+            mainSb.append(" ").append(generateUniqueTimestamp(event.getTime().getTime())); //switch to nanoseconds, as InfluxDB requires
 
             //prepare to the next row insert
             mainSb.append(System.lineSeparator());

@@ -26,9 +26,7 @@ public class CodeCommitToInfluxLineProtocol implements InfluxLineProtocolConvert
     public String convert(CodeCommitEvent event) {
 
         StringBuilder mainSb = new StringBuilder();
-        //ugly workaround needed to save multiple rows (row per file) for the same commit as tags are the same and only values are different
-        //i variable used to move each file timestamp in the same commit
-        int i=0;
+
         //Nothing sent to DB if no files exist in the files change list
         for (Map<String, Object> fileChange : event.getChangedFilesList()) {
             //create measurement and tags (tags, source and field name)
@@ -62,8 +60,7 @@ public class CodeCommitToInfluxLineProtocol implements InfluxLineProtocolConvert
                 mainSb.setLength(mainSb.length() - 1);
             }
             //add timestamp
-            //TBD - boris: make InfluxDBManager in event-indexer adding &precision=ms query param to "writeToDB" URL and remove 1000000 from here
-            mainSb.append(" ").append((event.getTime().getTime() + (i++)) * 1000000); //switch to nanoseconds, as InfluxDB requires
+            mainSb.append(" ").append(generateUniqueTimestamp(event.getTime().getTime()));
 
             //prepare to the next row insert
             mainSb.append(System.lineSeparator());

@@ -8,6 +8,7 @@ import com.hp.gaia.mgs.dto.testrun.AlmTestRunEvent;
 import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -69,4 +70,8 @@ public interface CommonDeserializerUtils {
         return nextEvent;
     }
 
+    default Date generateDate(JsonNode node){
+        TimestampRandomizer.getInstance().nextNumber();
+        return javax.xml.bind.DatatypeConverter.parseDateTime(node.get("time").asText()).getTime();
+    }
 }

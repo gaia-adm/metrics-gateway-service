@@ -62,11 +62,10 @@ public class TestRunToInfluxLineProtocol implements InfluxLineProtocolConverter<
         if(testResult.getSteps().isEmpty()){
             //remove last comma
             cutTrailingCharacter(commonPart,',');
-            mainSb.append(commonPart).append(" ").append(event.getTime().getTime() * 1000000); //switch to nanoseconds, as InfluxDB requires
+            mainSb.append(commonPart).append(" ").append(generateUniqueTimestamp(event.getTime().getTime()));
             //prepare to the next row insert
             mainSb.append(System.lineSeparator());
         } else {
-            int i=0;
             for (Map<String, Object> stepMap : testResult.getSteps()) {
                 StringBuilder steps = new StringBuilder();
                 for (String key : stepMap.keySet()) {
@@ -81,8 +80,7 @@ public class TestRunToInfluxLineProtocol implements InfluxLineProtocolConverter<
                 cutTrailingCharacter(steps,',');
 
                 //add timestamp
-                //TBD - boris: make InfluxDBManager in event-indexer adding &precision=ms query param to "writeToDB" URL and remove 1000000 from here
-                mainSb.append(commonPart).append(steps).append(" ").append((event.getTime().getTime() + (i++)) * 1000000); //switch to nanoseconds, as InfluxDB requires
+                mainSb.append(commonPart).append(steps).append(" ").append(generateUniqueTimestamp(event.getTime().getTime()));
 
                 //prepare to the next row insert
                 mainSb.append(System.lineSeparator());
