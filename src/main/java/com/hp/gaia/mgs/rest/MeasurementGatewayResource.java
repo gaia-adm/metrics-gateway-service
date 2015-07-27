@@ -1,5 +1,6 @@
 package com.hp.gaia.mgs.rest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.gaia.mgs.dto.BaseEvent;
@@ -139,7 +140,7 @@ public class MeasurementGatewayResource {
         CompletableFuture.supplyAsync(() -> {
             if (useAmqp) {
                 try {
-                    List<BaseEvent> receivedEvents = (List<BaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    List<BaseEvent> receivedEvents = new ObjectMapper().readValue(jsonEvents, new TypeReference<List<BaseEvent>>() {});
                     System.out.println("Tenant " + tenantDetails.get("tenantId") + " Got result, number of points: " + receivedEvents.size());
                     metricsCollector.publishEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
                     return null;
@@ -149,7 +150,7 @@ public class MeasurementGatewayResource {
                 }
             } else {
                 try {
-                    List<BaseEvent> receivedEvents = (List<BaseEvent>) new ObjectMapper().readValue(jsonEvents, BaseEvent.class);
+                    List<BaseEvent> receivedEvents = new ObjectMapper().readValue(jsonEvents, new TypeReference<List<BaseEvent>>() {});
                     System.out.println("Tenant " + tenantDetails.get("tenantId") + " Got result, number of points: " + receivedEvents.size());
                     metricsCollector.storeEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
                     return null;

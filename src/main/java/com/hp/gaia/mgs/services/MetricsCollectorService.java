@@ -79,7 +79,6 @@ public class MetricsCollectorService {
         InfluxLineProtocolConverterFactory converterFactory = new InfluxLineProtocolConverterFactory();
         for (T event : events) {
             mainSb.append(converterFactory.getConverter(event.getType()).convert(event));
-            //mainSb.append(converter.createEventConverterAndRun(event));
         }
 
         logger.debug("Publishing event for tenant {}: {} ", tenantId, mainSb);
@@ -114,7 +113,6 @@ public class MetricsCollectorService {
         InfluxLineProtocolConverterFactory converterFactory = new InfluxLineProtocolConverterFactory();
         for (T event : events) {
             mainSb.append(converterFactory.getConverter(event.getType()).convert(event));
-            //mainSb.append(converterFactory.createEventConverterAndRun(event));
         }
 
         logger.debug("Publishing event for tenant {}: {} ", tenantId, mainSb);
