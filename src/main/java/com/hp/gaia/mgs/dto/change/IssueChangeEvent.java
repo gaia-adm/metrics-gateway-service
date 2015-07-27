@@ -1,11 +1,10 @@
 package com.hp.gaia.mgs.dto.change;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.hp.gaia.mgs.dto.BaseEvent;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by belozovs on 7/15/2015.
@@ -14,31 +13,28 @@ import java.util.List;
  */
 
 @JsonDeserialize(using = IssueChangeDeserializer.class)
-public class IssueChangeEvent extends BaseEvent {
+public class IssueChangeEvent extends ChangeEvent {
 
     public final static String EVENT_TYPE = "issue_change";
 
-    @NotNull
-    List<IssueField> fields;
-
-    //TODO - boris: comments - like steps in TestRunEvent, with no group by
+    List<Map<String, Object>> comments;
 
     public IssueChangeEvent() {
         this.setType(EVENT_TYPE);
         fields = new ArrayList<>();
+        comments = new ArrayList<>();
     }
 
-    public List<IssueField> getFields() {
-        return fields;
+    public List<Map<String, Object>> getComments() {
+        return comments;
     }
 
-    @SuppressWarnings("unused")
-    public void setFields(List<IssueField> fields) {
-        this.fields = fields;
+    public void setComments(List<Map<String, Object>> comments) {
+        this.comments = comments;
     }
 
-    public void addField(IssueField field) {
-        this.fields.add(field);
+    public void addComment(Map<String, Object> comment) {
+        comments.add(comment);
     }
 
 }

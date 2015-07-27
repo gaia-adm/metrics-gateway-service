@@ -19,12 +19,26 @@ import java.util.Map;
  */
 
 
-public interface CommonDeserializerUtils {
+public interface CommonDeserializationUtils {
 
     /**
      * Fill a map with data from mapType element of json node
      */
-    default int fillMap(Map<String, String> map, String mapType, JsonNode node){
+
+    default int fillStringMap(Map<String, String> map, String mapType, JsonNode node){
+
+        if(node.get(mapType) != null) {
+            Iterator<Map.Entry<String, JsonNode>> fields = node.get(mapType).fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> field = fields.next();
+                map.put(field.getKey(), field.getValue().asText());
+            }
+        }
+        return map.size();
+    }
+
+
+    default int fillObjectMap(Map<String, Object> map, String mapType, JsonNode node){
 
         if(node.get(mapType) != null) {
             Iterator<Map.Entry<String, JsonNode>> fields = node.get(mapType).fields();

@@ -41,6 +41,10 @@ class TestRunResult {
         return customFields;
     }
 
+    public void setCustomFields(Map<String, Object> customFields) {
+        this.customFields = customFields;
+    }
+
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getSteps(){
         return new ArrayList();

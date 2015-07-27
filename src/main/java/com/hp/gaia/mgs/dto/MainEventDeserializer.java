@@ -14,7 +14,7 @@ import java.util.List;
  * Strict common/point level separation - if common field presented, it is ignored on point level EXCEPTING event type
  *
  */
-public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> implements CommonDeserializerUtils {
+public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> implements CommonDeserializationUtils {
 
     @Override
     public List<BaseEvent> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
@@ -30,13 +30,13 @@ public class MainEventDeserializer extends JsonDeserializer<List<BaseEvent>> imp
         }
 
         if(node.get("id") != null){
-            fillMap(commonPart.getId(), "id", node);
+            fillObjectMap(commonPart.getId(), "id", node);
         }
         if(node.get("source") != null){
-            fillMap(commonPart.getSource(), "source", node);
+            fillStringMap(commonPart.getSource(), "source", node);
         }
         if(node.get("tags") != null){
-            fillMap(commonPart.getTags(), "tags", node);
+            fillStringMap(commonPart.getTags(), "tags", node);
         }
         if(node.get("time") != null) {
             commonPart.setTime(javax.xml.bind.DatatypeConverter.parseDateTime(node.get("time").asText()).getTime());

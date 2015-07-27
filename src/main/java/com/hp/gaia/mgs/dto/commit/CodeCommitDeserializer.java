@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.hp.gaia.mgs.dto.CommonDeserializerUtils;
+import com.hp.gaia.mgs.dto.CommonDeserializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by belozovs on 7/15/2015.
  * IssueChange event deserializer
  */
-public class CodeCommitDeserializer extends JsonDeserializer<CodeCommitEvent> implements CommonDeserializerUtils {
+public class CodeCommitDeserializer extends JsonDeserializer<CodeCommitEvent> implements CommonDeserializationUtils {
 
     Logger logger = LoggerFactory.getLogger(CodeCommitDeserializer.class);
 
@@ -36,9 +36,9 @@ public class CodeCommitDeserializer extends JsonDeserializer<CodeCommitEvent> im
             cce.addChangedFile(fetchFileChange(fileNode));
         }
 
-        fillMap(cce.getId(), "id", node);
-        fillMap(cce.getSource(), "source", node);
-        fillMap(cce.getTags(), "tags", node);
+        fillObjectMap(cce.getId(), "id", node);
+        fillStringMap(cce.getSource(), "source", node);
+        fillStringMap(cce.getTags(), "tags", node);
 
 
         if (node.get("time") != null) {

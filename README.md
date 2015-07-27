@@ -1,8 +1,21 @@
 CircleCI build status: [![Circle CI](https://circleci.com/gh/gaia-adm/metrics-gateway-service.svg?style=svg)](https://circleci.com/gh/gaia-adm/metrics-gateway-service)
 # metrics-gateway-service
-Temporary metrics-gateway-service based on jax-rs and jersey with async I/O
-This implementation is temporary, can be moved to another platform if we discover it is not robust and scalable enough
 This implementation uses spring-security based authz server. Oltu build-in version is available in with_oltu branch
+
+NOTES:
+- only predefined types supported
+- no "common part" - each event includes everything
+- timestamp uniqueness: microseconds keep instanceId, nanoseconds keep running number unique per instance
+- separate DB record created for each map in list of maps (fields, steps, comments, attachments, etc.). For each record datatype tag is added to easier distinguishing between data of fields, comments, etc.
+
+To add new event:
+- add DTO extending BaseEvent directly or indirectly. Note EVENT_TYPE field must be set in constructor, not later via setter
+- add deserializer
+- set deserializer annotation in DTO
+- add/update xxxToInfluxProtocol class
+- register type in BaseEvent (add subtype annotation)
+- register type in InfluxLineProtocolConverterFactory
+
 
 How to run locally: build a war and put it on Jetty (tested with Jetty 9.2) or run mnn jetty:run
 

@@ -41,7 +41,7 @@ public class TestRunToInfluxLineProtocol implements InfluxLineProtocolConverter<
         //id and values (fields, result, etc.)
         for (String key : event.getId().keySet()) {
             //note: id value is always String
-            commonPart.append("id_").append(getEscapedString(key)).append("=").append(getQuotedValue(event.getId().get(key))).append(",");
+//            commonPart.append("id_").append(getEscapedString(key)).append("=").append(getQuotedValue(event.getId().get(key))).append(",");
         }
         commonPart.append("runTime=").append(testResult.getRunTime()).append(",");
         if(testResult.getErrorString()!= null) {

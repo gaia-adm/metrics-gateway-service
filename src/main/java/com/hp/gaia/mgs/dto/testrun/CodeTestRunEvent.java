@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * Version of TestRunEvent for automatic test
  * Main differentiator: EVENT_TYPE
  */
-@JsonDeserialize(using = TestRunDeserializer.class)
+@JsonDeserialize(using = CodeTestRunDeserializer.class)
 public class CodeTestRunEvent extends TestRunEvent {
 
     public final static String EVENT_TYPE = "code_testrun";

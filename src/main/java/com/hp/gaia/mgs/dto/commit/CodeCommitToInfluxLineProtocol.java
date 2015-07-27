@@ -30,45 +30,22 @@ public class CodeCommitToInfluxLineProtocol implements InfluxLineProtocolConvert
         //Nothing sent to DB if no files exist in the files change list
         for (Map<String, Object> fileChange : event.getChangedFilesList()) {
             //create measurement and tags (tags, source and field name)
+            //create measurement and tags (tags, source)
             mainSb.append(getEscapedString(event.getType()));
-            for (String key : event.getSource().keySet()) {
-                mainSb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getSource().get(key)));
-            }
-            for (String key : event.getTags().keySet()) {
-                mainSb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getTags().get(key)));
-            }
+            mainSb.append(createTags(event));
 
             //separator between measurement+tags and data part of the string
             mainSb.append(" ");
+
             //create data part
-            //id and values (fields, result, etc.)
-            for (String key : event.getId().keySet()) {
-                //note: id value is always String and should be quoted
-                mainSb.append("id_").append(getEscapedString(key)).append("=").append(getQuotedValue(event.getId().get(key))).append(",");
-            }
-            mainSb.append("totalChangedFiles=").append(event.getChangedFilesList().size()).append(",");
+            mainSb.append(createDataFromMap(event.getId()));
+            mainSb.append(createDataFromMap(fileChange));
 
-            for (String key : fileChange.keySet()) {
-                if (fileChange.get(key).getClass().equals(java.lang.String.class)) {
-                    mainSb.append(getEscapedString(key)).append("=").append(getQuotedValue((String) fileChange.get(key))).append(",");
-                } else {
-                    mainSb.append(getEscapedString(key)).append("=").append(fileChange.get(key)).append(",");
-                }
-            }
-
-            if (mainSb.length() > 0 && mainSb.charAt(mainSb.length() - 1) == ',') {
-                mainSb.setLength(mainSb.length() - 1);
-            }
-            //add timestamp
-            mainSb.append(" ").append(generateUniqueTimestamp(event.getTime().getTime()));
-
-            //prepare to the next row insert
-            mainSb.append(System.lineSeparator());
+            cutTrailingComma(mainSb);
+            mainSb.append(createTimestampLattermost(event));
         }
 
-
         return mainSb.toString();
-
     }
 
 

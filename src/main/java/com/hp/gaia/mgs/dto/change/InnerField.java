@@ -1,5 +1,6 @@
 package com.hp.gaia.mgs.dto.change;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,15 +8,17 @@ import java.util.Map;
  * Created by belozovs on 7/16/2015.
  * Field of IssueChangeEvent
  */
-public class IssueField {
+public class InnerField {
 
+    @NotNull
     String name;
+    @NotNull
     String to;
     String from;
     Long ttc;
     Map<String, String> customFields = new HashMap<>();
 
-    public IssueField(String name) {
+    public InnerField(String name) {
         this.name = name;
     }
 
@@ -59,4 +62,13 @@ public class IssueField {
         customFields.put(name, value);
     }
 
+    public Map<String, Object> getMembersAsMap(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", name);
+        map.put("to", to);
+        map.put("from", from);
+        map.put("ttc", ttc);
+        map.putAll(customFields);
+        return map;
+    }
 }

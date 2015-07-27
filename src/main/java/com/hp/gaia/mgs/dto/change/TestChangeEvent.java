@@ -1,31 +1,44 @@
 package com.hp.gaia.mgs.dto.change;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hp.gaia.mgs.dto.BaseEvent;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by belozovs on 7/24/2015.
  */
-public class TestChangeEvent extends BaseEvent {
+@JsonDeserialize(using = TestChangeDeserializer.class)
+public class TestChangeEvent extends ChangeEvent {
 
     public final static String EVENT_TYPE = "test_change";
 
-    List<IssueField> fields;
-    //TODO - boris: steps and attachments - like steps in TestRunEvent? Everything is OK but no group by
+    List<Map<String, Object>> attachments;
+    List<Map<String, Object>> steps;
 
-    public List<IssueField> getFields() {
-        return fields;
+    public TestChangeEvent() {
+        this.setType(EVENT_TYPE);
+        fields = new ArrayList<>();
+        attachments = new ArrayList<>();
+        steps= new ArrayList<>();
     }
 
-    public void setFields(List<IssueField> fields) {
-        this.fields = fields;
+    public List<Map<String, Object>> getAttachments() {
+        return attachments;
     }
 
-    public void addField(IssueField field) {
-        this.fields.add(field);
+    public void setAttachments(List<Map<String, Object>> attachments) {
+        this.attachments = attachments;
     }
 
+    public List<Map<String, Object>> getSteps() {
+        return steps;
+    }
 
+    public void setSteps(List<Map<String, Object>> steps) {
+        this.steps = steps;
+    }
 }

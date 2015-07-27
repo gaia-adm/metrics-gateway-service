@@ -16,38 +16,41 @@ import java.util.Iterator;
  * Created by belozovs on 7/15/2015.
  * IssueChange event deserializer
  */
-public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> implements CommonDeserializationUtils {
+public class TestChangeDeserializer extends JsonDeserializer<TestChangeEvent> implements CommonDeserializationUtils {
 
-    Logger logger = LoggerFactory.getLogger(IssueChangeDeserializer.class);
+    Logger logger = LoggerFactory.getLogger(TestChangeDeserializer.class);
 
     @Override
-    public IssueChangeEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+    public TestChangeEvent deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
 
         JsonNode node = jp.getCodec().readTree(jp);
 
-        IssueChangeEvent ice = new IssueChangeEvent();
+        TestChangeEvent tce = new TestChangeEvent();
 
         DeserializationUtils du = new DeserializationUtils();
 
         Iterator<JsonNode> fieldNodes = node.get("fields").elements();
+
         while (fieldNodes.hasNext()) {
             JsonNode fieldNode = fieldNodes.next();
-            ice.addField(du.fetchIssueField(fieldNode));
+            tce.addField(du.fetchIssueField(fieldNode));
         }
 
-        fillObjectMap(ice.getId(), "id", node);
-        fillStringMap(ice.getSource(), "source", node);
-        fillStringMap(ice.getTags(), "tags", node);
+        fillObjectMap(tce.getId(), "id", node);
+        fillStringMap(tce.getSource(), "source", node);
+        fillStringMap(tce.getTags(), "tags", node);
 
-        ice.setComments(du.fetchMultipleMaps(node, "comments"));
+        tce.setAttachments(du.fetchMultipleMaps(node, "attachments"));
+        tce.setSteps(du.fetchMultipleMaps(node, "steps"));
 
         if (node.get("time") != null) {
-            ice.setTime(javax.xml.bind.DatatypeConverter.parseDateTime(node.get("time").asText()).getTime());
+            tce.setTime(javax.xml.bind.DatatypeConverter.parseDateTime(node.get("time").asText()).getTime());
         } else {
-            ice.setTime(new Date());
+            tce.setTime(new Date());
         }
 
-        return ice;
+        return tce;
     }
+
 
 }

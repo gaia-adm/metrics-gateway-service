@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * Version of TestRunEvent for ALM (manual test)
  * Main differentiators: EVENT_TYPE and {@link AlmTestRunResult}
  */
-@JsonDeserialize(using = TestRunDeserializer.class)
+@JsonDeserialize(using = AlmTestRunDeserializer.class)
 public class AlmTestRunEvent extends TestRunEvent {
 
     public final static String EVENT_TYPE = "tm_testrun";
