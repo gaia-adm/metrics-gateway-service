@@ -22,7 +22,7 @@ public class ChangeToInfluxLineProtocol implements InfluxLineProtocolConverter<C
             mainSb.append(getEscapedString(event.getType()));
             mainSb.append(createTags(event));
             //add field name as a tag
-            mainSb.append(",").append("datatype=field");
+            mainSb.append(",").append("dimension=field");
 
             //separator between measurement+tags and data part of the string
             mainSb.append(" ");
@@ -41,7 +41,7 @@ public class ChangeToInfluxLineProtocol implements InfluxLineProtocolConverter<C
                 mainSb.append(getEscapedString(event.getType()));
                 mainSb.append(createTags(event));
                 //add "comment" as a tag
-                mainSb.append(",").append("datatype=comment");
+                mainSb.append(",").append("dimension=comment");
                 //separator between measurement+tags and data part of the string
                 mainSb.append(" ");
                 //create data part
@@ -61,7 +61,7 @@ public class ChangeToInfluxLineProtocol implements InfluxLineProtocolConverter<C
                 mainSb.append(getEscapedString(event.getType()));
                 mainSb.append(createTags(event));
                 //add "attachment" as a tag
-                mainSb.append(",").append("datatype=attachment");
+                mainSb.append(",").append("dimension=attachment");
                 //separator between measurement+tags and data part of the string
                 mainSb.append(" ");
                 //create data part
@@ -78,7 +78,7 @@ public class ChangeToInfluxLineProtocol implements InfluxLineProtocolConverter<C
                 mainSb.append(getEscapedString(event.getType()));
                 mainSb.append(createTags(event));
                 //add "step" as a tag
-                mainSb.append(",").append("datatype=step");
+                mainSb.append(",").append("dimension=step");
                 //separator between measurement+tags and data part of the string
                 mainSb.append(" ");
                 //create data part

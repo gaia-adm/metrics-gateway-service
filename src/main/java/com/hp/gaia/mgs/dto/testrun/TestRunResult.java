@@ -49,4 +49,13 @@ class TestRunResult {
     public List<Map<String, Object>> getSteps(){
         return new ArrayList();
     }
+
+    public Map<String, Object> getMembersAsMap(){
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", status);
+        map.put("runtTime", runTime);
+        map.put("erorString", errorString);
+        map.putAll(customFields);
+        return map;
+    }
 }

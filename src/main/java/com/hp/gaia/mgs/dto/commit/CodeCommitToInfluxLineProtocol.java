@@ -33,7 +33,8 @@ public class CodeCommitToInfluxLineProtocol implements InfluxLineProtocolConvert
             //create measurement and tags (tags, source)
             mainSb.append(getEscapedString(event.getType()));
             mainSb.append(createTags(event));
-
+            //add "file" as a tag
+            mainSb.append(",").append("dimension=file");
             //separator between measurement+tags and data part of the string
             mainSb.append(" ");
 
