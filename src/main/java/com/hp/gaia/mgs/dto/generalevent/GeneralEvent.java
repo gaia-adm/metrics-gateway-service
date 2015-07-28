@@ -8,6 +8,8 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 7/24/2015.
+ * General event for testing purpose mostly
+ *
  */
 @JsonDeserialize(using = GeneralEventDeserializer.class)
 public class GeneralEvent extends BaseEvent {

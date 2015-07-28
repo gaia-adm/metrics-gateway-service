@@ -28,7 +28,7 @@ public class AlmTestRunEventParserTest {
         assertEquals("Event of type tm_testrun", AlmTestRunEvent.EVENT_TYPE, events.get(0).getType());
         assertEquals("Four tags presented", 4, (events.get(0)).getTags().size());
         assertEquals("Three items in source presented", 3, (events.get(0)).getSource().size());
-        assertEquals("Three items in result (not including steps) presented", 3, ((AlmTestRunEvent) (events.get(0))).getResult().getMembersAsMap().size());
+        assertEquals("Three items in result (not including steps) presented", 2, ((AlmTestRunEvent) (events.get(0))).getResult().getMembersAsMap().size());
         assertEquals("Three steps in result presented", 3, ((AlmTestRunEvent) (events.get(0))).getResult().getSteps().size());
     }
 }

@@ -9,6 +9,8 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 7/24/2015.
+ *
+ * Code commit event object
  */
 @JsonDeserialize(using = CodeCommitDeserializer.class)
 public class CodeCommitEvent extends BaseEvent {

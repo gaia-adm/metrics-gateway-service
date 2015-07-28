@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 /**
  * Created by belozovs on 7/15/2015.
- * IssueChange event deserializer
+ * TestChange event deserializer
  */
 public class TestChangeDeserializer extends JsonDeserializer<TestChangeEvent> implements CommonDeserializationUtils {
 

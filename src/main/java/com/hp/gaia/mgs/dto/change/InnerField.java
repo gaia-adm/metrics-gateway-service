@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 7/16/2015.
- * Field of IssueChangeEvent
+ * Field for IssueChangeEvent
  */
 public class InnerField {
 

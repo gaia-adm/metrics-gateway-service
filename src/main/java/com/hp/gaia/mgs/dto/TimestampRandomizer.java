@@ -5,6 +5,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by belozovs on 7/26/2015.
  *
+ * Create unique number running between 0 and 1000 (not included)
+ * Used for making timestamp unique (by using the generated number as a nanoseconds part of the timestamp)
+ *
  */
 
 public class TimestampRandomizer {

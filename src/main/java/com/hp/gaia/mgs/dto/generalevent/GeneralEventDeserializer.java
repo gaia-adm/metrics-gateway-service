@@ -14,6 +14,7 @@ import java.util.Date;
 
 /**
  * Created by belozovs on 7/28/2015.
+ * Deserializer for General event
  */
 public class GeneralEventDeserializer extends JsonDeserializer<GeneralEvent>  implements CommonDeserializationUtils {
 

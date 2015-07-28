@@ -11,7 +11,7 @@ import com.hp.gaia.mgs.dto.testrun.*;
 
 /**
  * Created by belozovs on 7/23/2015.
- * Create correct event converter and run it
+ * Return correct event converter
  */
 public class InfluxLineProtocolConverterFactory {
 

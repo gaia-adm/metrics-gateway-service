@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestChangeEventParserTest {
 
-    private final String testChange = "{\"time\":\"2015-11-10T23:00:00Z\",\"id\":{\"uid\":\"2341\"},\"event\":\"test_change\",\"source\":{\"server\":\"http://alm-saas.hp.com\",\"domain\":\"IT\",\"project\":\"Project A\"},\"tags\":{\"workspace\":\"CRM\",\"user\":\"bob\"},\"fields\":[{\"name\":\"State\",\"from\":\"Maintenance\",\"to\":\"Ready\",\"ttc(d)\":11}],\"steps\":[{\"new\":10,\"modified\":3,\"deleted\":1}],\"attachments\":[{\"name\":\"readme.docx\",\"size\":\"1.3M\"}]}";
+    private final String testChange = "{\"time\":\"2015-07-27T23:00:00Z\",\"id\":{\"uid\":\"2341\"},\"event\":\"test_change\",\"source\":{\"server\":\"http://alm-saas.hp.com\",\"domain\":\"IT\",\"project\":\"Project A\"},\"tags\":{\"workspace\":\"CRM\",\"user\":\"bob\"},\"fields\":[{\"name\":\"State\",\"from\":\"Maintenance\",\"to\":\"Ready\",\"ttc(d)\":11}],\"steps\":[{\"new\":10,\"modified\":3,\"deleted\":1}],\"attachments\":[{\"name\":\"readme.docx\",\"size\":\"1.3M\"}]}";
 
     @Test
     public void testTestChange() throws Exception {

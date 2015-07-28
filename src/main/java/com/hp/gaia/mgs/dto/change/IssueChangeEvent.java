@@ -8,8 +8,9 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 7/15/2015.
- * <p>
- * No support for comments
+ *
+ * Object representing issue change event
+ *
  */
 
 @JsonDeserialize(using = IssueChangeDeserializer.class)

@@ -1,10 +1,7 @@
 package com.hp.gaia.mgs.dto;
 
-import com.hp.gaia.mgs.dto.change.ChangeEvent;
-import com.hp.gaia.mgs.services.PropertiesKeeperService;
 import org.springframework.util.StringUtils;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -42,10 +39,11 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
      * The original timestamp precision is milliseconds, we "increase" the precision in order to promise its uniqueness
      * microseconds part is populated with MGS service id, in case of multiple instances (environment vairable instanceId must be presented, set to 000 if missing)
      * nanoseconds part is populated with running integer number in the range between 0 to 1000.
+     *
      * @param time original timestamp
      * @return "more precise" timestamp
      */
-    default Long generateUniqueTimestamp(long time){
+    default Long generateUniqueTimestamp(long time) {
 
         String microseconds;
         String nanoseconds;
@@ -65,7 +63,7 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
         return Long.valueOf(String.valueOf(time).concat(microseconds).concat(nanoseconds));
     }
 
-    default void cutTrailingComma(StringBuilder sb){
+    default void cutTrailingComma(StringBuilder sb) {
         if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ',') {
             sb.setLength(sb.length() - 1);
         }
@@ -86,12 +84,12 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
     default String createTags(BaseEvent event) {
         StringBuilder sb = new StringBuilder();
         for (String key : event.getSource().keySet()) {
-            if(event.getSource().get(key) != null) {
+            if (event.getSource().get(key) != null) {
                 sb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getSource().get(key)));
             }
         }
         for (String key : event.getTags().keySet()) {
-            if(event.getSource().get(key) != null) {
+            if (event.getSource().get(key) != null) {
                 sb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getTags().get(key)));
             }
         }
@@ -102,7 +100,7 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
     default String createDataFromMap(Map<String, Object> map) {
         StringBuilder sb = new StringBuilder();
         for (String key : map.keySet()) {
-            if (map.get(key)!= null && map.get(key).getClass().equals(java.lang.String.class)) {
+            if (map.get(key) != null && map.get(key).getClass().equals(java.lang.String.class)) {
                 sb.append(getEscapedString(key)).append("=").append(getQuotedValue((String) map.get(key))).append(",");
             } else {
                 sb.append(getEscapedString(key)).append("=").append(map.get(key)).append(",");

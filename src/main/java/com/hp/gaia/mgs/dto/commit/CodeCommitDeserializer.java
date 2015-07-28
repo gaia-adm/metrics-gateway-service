@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 7/15/2015.
- * IssueChange event deserializer
+ * CodeCommit event deserializer
  */
 public class CodeCommitDeserializer extends JsonDeserializer<CodeCommitEvent> implements CommonDeserializationUtils {
 

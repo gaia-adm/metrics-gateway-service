@@ -9,6 +9,9 @@ import java.util.*;
 
 /**
  * Created by belozovs on 7/27/2015.
+ *
+ * Some methods that are reusable in this package.
+ * NOTE: the class access level is not public
  */
 class DeserializationUtils {
 

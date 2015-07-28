@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Created by belozovs on 7/27/2015.
+ * Base class for all change events (e.g., IssueChange, TestChange)
  */
 public class ChangeEvent extends BaseEvent{
 

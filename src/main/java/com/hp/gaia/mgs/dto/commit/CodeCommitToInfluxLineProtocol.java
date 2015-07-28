@@ -14,10 +14,13 @@ public class CodeCommitToInfluxLineProtocol implements InfluxLineProtocolConvert
 
     /**
      * Convert CodeCommitEvent to string compatible with InfluxDB 0.9 line protocol
-     * For each file separate line created with all its attributes as values
-     * Artificial commitId is set as a value
-     * Artificial field representing a number of files changed in the commit is introduced for further statistics
-     * Example of the output (single row):
+     * Conversion of single input event may result to multiple records in DB
+     * Example:
+     * Input:
+     * {"event":"code_commit","time":"2015-11-10T23:00:00Z","source":{"repository":"git://github.com/hp/mqm-server","branch":"master"},"id":{"uid":"8ad3535acb2a724eb0058fa071c788d48ab6978e"},"tags":{"user":"alex"},"files":[{"file":"README.md","loc":10},{"file":" src/main/java/managers/RabbitmqManager.java","loc":-14}]}
+     * Output (2 rows):
+     * code_commit,repository=git://github.com/hp/mqm-server,branch=master,dimension=file uid="8ad3535acb2a724eb0058fa071c788d48ab6978e",loc=10,file="README.md" 1438038000000000006
+     * code_commit,repository=git://github.com/hp/mqm-server,branch=master,dimension=file uid="8ad3535acb2a724eb0058fa071c788d48ab6978e",loc=-14,file=" src/main/java/managers/RabbitmqManager.java" 1438038000000000007
      *
      * @param event event to be converted
      * @return row to be inserted to InfluxDB
@@ -29,7 +32,6 @@ public class CodeCommitToInfluxLineProtocol implements InfluxLineProtocolConvert
 
         //Nothing sent to DB if no files exist in the files change list
         for (Map<String, Object> fileChange : event.getChangedFilesList()) {
-            //create measurement and tags (tags, source and field name)
             //create measurement and tags (tags, source)
             mainSb.append(getEscapedString(event.getType()));
             mainSb.append(createTags(event));

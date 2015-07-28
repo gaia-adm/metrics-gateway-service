@@ -10,6 +10,8 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 7/24/2015.
+ *
+ * Object representing test change event
  */
 @JsonDeserialize(using = TestChangeDeserializer.class)
 public class TestChangeEvent extends ChangeEvent {
