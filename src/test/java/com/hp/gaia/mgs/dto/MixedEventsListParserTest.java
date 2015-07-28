@@ -56,11 +56,11 @@ public class MixedEventsListParserTest {
         }
 
         Assert.assertEquals("5 events arrived", 5, events.size());
-        Assert.assertEquals("3 rows for issue_change expected", Long.valueOf(3L), Long.valueOf(eventTypeMap.get(IssueChangeEvent.EVENT_TYPE)));
-        Assert.assertEquals("3 rows for test_change expected", Long.valueOf(3L), Long.valueOf(eventTypeMap.get(TestChangeEvent.EVENT_TYPE)));
-        Assert.assertEquals("2 rows for code_commit expected", Long.valueOf(2L), Long.valueOf(eventTypeMap.get(CodeCommitEvent.EVENT_TYPE)));
-        Assert.assertEquals("1 row for code_testrun expected", Long.valueOf(1L), Long.valueOf(eventTypeMap.get(CodeTestRunEvent.EVENT_TYPE)));
-        Assert.assertEquals("4rows for tm_testrun expected", Long.valueOf(4L), Long.valueOf(eventTypeMap.get(AlmTestRunEvent.EVENT_TYPE)));
+        Assert.assertEquals("3 records for issue_change expected", Long.valueOf(3L), Long.valueOf(eventTypeMap.get(IssueChangeEvent.EVENT_TYPE)));
+        Assert.assertEquals("3 records for test_change expected", Long.valueOf(3L), Long.valueOf(eventTypeMap.get(TestChangeEvent.EVENT_TYPE)));
+        Assert.assertEquals("2 records for code_commit expected", Long.valueOf(2L), Long.valueOf(eventTypeMap.get(CodeCommitEvent.EVENT_TYPE)));
+        Assert.assertEquals("1 records for code_testrun expected", Long.valueOf(1L), Long.valueOf(eventTypeMap.get(CodeTestRunEvent.EVENT_TYPE)));
+        Assert.assertEquals("4 records for tm_testrun expected", Long.valueOf(4L), Long.valueOf(eventTypeMap.get(AlmTestRunEvent.EVENT_TYPE)));
 
     }
 }
