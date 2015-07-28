@@ -9,6 +9,7 @@ Functionality:
 - Supports only predefined data types s described [here] (https://github.com/gaia-adm/api-data-format)
 - General data type is defined for testing purpose as described [here] (https://github.com/gaia-adm/api-data-format)
 - Requires authorization token when sending events
+- Timestamp uniqueness: microseconds keep instanceId, nanoseconds keep running number unique per instance
 - Monitor memory and number of threads consumed by this service (on demand)
 - For testing purpose: can work without RabbitMQ with -DuseAmqp=false. In this case output is just printed to stdout
 
@@ -20,6 +21,7 @@ Customization (-D parameters) - based on default.properties file. For example,
 - Authorization server: -DauthServer=name:port. Defalut is localhot:9001
 - Output to log file (metrics-storage.log) or to RabbitMQ: -DuseAmqp=true/false. Default is false (print to log file)
 - RabbitMQ parameters: host, port, user, password, routing key: -DamqpHost, -DamqpPort, -DamqpUser, -DamqpPassword, -DamqpRoutingKey. Defaults are localhost, 5672, admin, "", events-indexer
+- Instance ID is used for making the timestamp unique; in local environment can be set with -DinstanceId=<number> parameter or just use 0 when not set. In fleet deployment set automatically.
 
 API:
 - Publish metrics 
@@ -40,19 +42,16 @@ API:
     - Parameters:
       - action: String; on - start monitoring, off - stop monitoring
 
-    NOTES:
-    - only predefined types supported
-    - no "common part" - each event includes everything
-    - timestamp uniqueness: microseconds keep instanceId, nanoseconds keep running number unique per instance
-    - separate DB record created for each map in list of maps (fields, steps, comments, attachments, etc.). For each record datatype tag is added to easier distinguishing between data of fields, comments, etc.
 
-    To add new event:
-    - add DTO extending BaseEvent directly or indirectly. Note EVENT_TYPE field must be set in constructor, not later via setter
-    - add deserializer
-    - set deserializer annotation in DTO
-    - add/update xxxToInfluxProtocol class
-    - register type in BaseEvent (add subtype annotation)
-    - register type in InfluxLineProtocolConverterFactory
+To add new event:
+  - add DTO extending BaseEvent directly or indirectly. Note EVENT_TYPE field must be unique and set in constructor
+  - add deserializer
+  - set deserializer annotation in DTO
+  - add/update xxxToInfluxProtocol class
+  - register type in BaseEvent (add subtype annotation)
+  - register type in InfluxLineProtocolConverterFactory
+  - add xxxEventParserTest in the relevant package
+  - add event to MixedEventsListParserTest
 
 
 
