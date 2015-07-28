@@ -1,5 +1,6 @@
 package com.hp.gaia.mgs.dto.testrun;
 
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -8,6 +9,7 @@ import java.util.*;
  */
 class TestRunResult {
 
+    @NotNull
     private String status;
     private Long runTime;
     private String errorString;
@@ -53,8 +55,12 @@ class TestRunResult {
     public Map<String, Object> getMembersAsMap(){
         Map<String, Object> map = new HashMap<>();
         map.put("status", status);
-        map.put("runtTime", runTime);
-        map.put("erorString", errorString);
+        if(runTime!=null){
+            map.put("runtTime", runTime);
+        }
+        if(errorString!=null) {
+            map.put("erorString", errorString);
+        }
         map.putAll(customFields);
         return map;
     }

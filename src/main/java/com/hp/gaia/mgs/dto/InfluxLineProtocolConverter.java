@@ -86,10 +86,14 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
     default String createTags(BaseEvent event) {
         StringBuilder sb = new StringBuilder();
         for (String key : event.getSource().keySet()) {
-            sb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getSource().get(key)));
+            if(event.getSource().get(key) != null) {
+                sb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getSource().get(key)));
+            }
         }
         for (String key : event.getTags().keySet()) {
-            sb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getTags().get(key)));
+            if(event.getSource().get(key) != null) {
+                sb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getTags().get(key)));
+            }
         }
 
         return sb.toString();

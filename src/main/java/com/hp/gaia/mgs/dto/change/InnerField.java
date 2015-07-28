@@ -59,15 +59,21 @@ public class InnerField {
     }
 
     public void addCustomField(String name, String value) {
-        customFields.put(name, value);
+        if(value!=null) {
+            customFields.put(name, value);
+        }
     }
 
     public Map<String, Object> getMembersAsMap(){
         Map<String, Object> map = new HashMap<>();
         map.put("name", name);
         map.put("to", to);
-        map.put("from", from);
-        map.put("ttc", ttc);
+        if(from!=null){
+            map.put("from", from);
+        }
+        if(ttc!=null){
+            map.put("ttc", ttc);
+        }
         map.putAll(customFields);
         return map;
     }

@@ -34,7 +34,9 @@ class DeserializationUtils {
                         trr.setRunTime(resultNode.get(fieldName).asLong());
                         break;
                     default:
-                        trr.getCustomFields().put(fieldName, resultNode.get(fieldName));
+                        if(resultNode.get(fieldName) != null) {
+                            trr.getCustomFields().put(fieldName, resultNode.get(fieldName));
+                        }
                         break;
                 }
             }
