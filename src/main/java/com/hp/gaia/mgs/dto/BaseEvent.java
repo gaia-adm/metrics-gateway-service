@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.hp.gaia.mgs.dto.change.IssueChangeEvent;
 import com.hp.gaia.mgs.dto.change.TestChangeEvent;
 import com.hp.gaia.mgs.dto.commit.CodeCommitEvent;
+import com.hp.gaia.mgs.dto.generalevent.GeneralEvent;
 import com.hp.gaia.mgs.dto.testrun.AlmTestRunEvent;
 import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
 
@@ -31,7 +32,8 @@ import java.util.Map;
         @JsonSubTypes.Type(value = TestChangeEvent.class, name = "test_change"),
         @JsonSubTypes.Type(value = CodeCommitEvent.class, name = "code_commit"),
         @JsonSubTypes.Type(value = AlmTestRunEvent.class, name = "tm_testrun"),
-        @JsonSubTypes.Type(value = CodeTestRunEvent.class, name = "code_testrun")})
+        @JsonSubTypes.Type(value = CodeTestRunEvent.class, name = "code_testrun"),
+        @JsonSubTypes.Type(value = GeneralEvent.class, name = "general")})
 public class BaseEvent {
 
     //EVENT_TYPE is not used here directly but needed for using with generic code

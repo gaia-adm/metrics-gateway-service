@@ -44,7 +44,30 @@ public interface CommonDeserializationUtils {
             Iterator<Map.Entry<String, JsonNode>> fields = node.get(mapType).fields();
             while (fields.hasNext()) {
                 Map.Entry<String, JsonNode> field = fields.next();
-                map.put(field.getKey(), field.getValue().asText());
+                switch (field.getValue().getClass().getName()){
+                    case "com.fasterxml.jackson.databind.node.BooleanNode":
+                        map.put(field.getKey(), field.getValue().asBoolean());
+                        break;
+                    case "com.fasterxml.jackson.databind.node.IntNode":
+                        map.put(field.getKey(), field.getValue().asInt());
+                        break;
+                    case "com.fasterxml.jackson.databind.node.LongNode":
+                        map.put(field.getKey(), field.getValue().asLong());
+                        break;
+                    case "com.fasterxml.jackson.databind.node.DoubleNode":
+                        map.put(field.getKey(), field.getValue().asDouble());
+                        break;
+                    case "com.fasterxml.jackson.databind.node.FloatNode":
+                        map.put(field.getKey(), field.getValue().asDouble());
+                        break;
+                    case "com.fasterxml.jackson.databind.node.TextNode":
+                        map.put(field.getKey(), field.getValue().asText());
+                        break;
+                    default :
+                        map.put(field.getKey(), field.getValue().asText());
+                        break;
+                }
+
             }
         }
         return map.size();

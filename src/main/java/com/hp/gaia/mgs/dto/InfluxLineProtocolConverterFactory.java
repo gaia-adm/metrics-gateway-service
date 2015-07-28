@@ -5,6 +5,8 @@ import com.hp.gaia.mgs.dto.change.ChangeToInfluxLineProtocol;
 import com.hp.gaia.mgs.dto.change.TestChangeEvent;
 import com.hp.gaia.mgs.dto.commit.CodeCommitEvent;
 import com.hp.gaia.mgs.dto.commit.CodeCommitToInfluxLineProtocol;
+import com.hp.gaia.mgs.dto.generalevent.GeneralEvent;
+import com.hp.gaia.mgs.dto.generalevent.GeneralEventToInfluxLineProtocol;
 import com.hp.gaia.mgs.dto.testrun.*;
 
 /**
@@ -28,6 +30,9 @@ public class InfluxLineProtocolConverterFactory {
         }
         if (type.equals(CodeCommitEvent.EVENT_TYPE)){
             return new CodeCommitToInfluxLineProtocol();
+        }
+        if(type.equals(GeneralEvent.EVENT_TYPE)){
+            return new GeneralEventToInfluxLineProtocol();
         }
         throw new RuntimeException("Event type not supported: " + type);
     }
