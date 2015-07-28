@@ -1,7 +1,5 @@
 package com.hp.gaia.mgs.dto;
 
-import org.springframework.util.StringUtils;
-
 import java.util.Map;
 
 /**
@@ -37,7 +35,7 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
      * Generate unique timestamp with nanosecond precision in order to prevent attempt of insert to InfluxDB with non-unique timestamp
      * It is possible that several events come with the same timestamp and the same tags.
      * The original timestamp precision is milliseconds, we "increase" the precision in order to promise its uniqueness
-     * microseconds part is populated with MGS service id, in case of multiple instances (environment vairable instanceId must be presented, set to 000 if missing)
+     * microseconds part is populated the last part of IP
      * nanoseconds part is populated with running integer number in the range between 0 to 1000.
      *
      * @param time original timestamp
@@ -45,20 +43,9 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
      */
     default Long generateUniqueTimestamp(long time) {
 
-        String microseconds;
-        String nanoseconds;
-
-        //Do not use PropertiesKeeperService in order to not deal with IOException handling
-        String instanceId = System.getenv("instanceId");
-        //add leading zeroes (to String) to make it 3-digit
-        if (!StringUtils.isEmpty(instanceId) && instanceId.length() < 4) {
-            microseconds = ("000" + instanceId).substring(instanceId.length());
-        } else {
-            microseconds = "000";
-        }
-
         //add leading zeroes (to numeric) to make it 3-digit
-        nanoseconds = String.format("%03d", TimestampRandomizer.getInstance().nextNumber());
+        String microseconds = String.format("%03d", TimestampRandomizer.getInstance().getPartOfIp());
+        String nanoseconds = String.format("%03d", TimestampRandomizer.getInstance().nextNumber());
 
         return Long.valueOf(String.valueOf(time).concat(microseconds).concat(nanoseconds));
     }

@@ -1,9 +1,9 @@
 package com.hp.gaia.mgs.dto;
 
-import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,10 +18,15 @@ public class TimestampRandomizerTest {
 
     TimestampRandomizer tr = TimestampRandomizer.getInstance();
     int threadCount = 5000;
-    final List<Integer> results = new ArrayList<>();
 
     @Test
-    public void mtTest() throws Exception {
+    public void testPartOfIp() throws Exception {
+
+        assertTrue("last part of ip returned - should be between 0 and 256", tr.getPartOfIp() >= 0 && tr.getPartOfIp() < 256);
+    }
+
+    @Test
+    public void testNextNumberMultiThread() throws Exception {
 
         Runnable task = new Runnable() {
             @Override

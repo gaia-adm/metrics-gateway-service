@@ -9,7 +9,6 @@ How to run locally: build a war and put it on Jetty (tested with Jetty 9.2) or r
 - Supports only predefined data types s described [here] (https://github.com/gaia-adm/api-data-format)
 - General data type is defined for testing purpose as described [here] (https://github.com/gaia-adm/api-data-format)
 - Requires authorization token when sending events
-- Timestamp uniqueness: microseconds keep instanceId, nanoseconds keep running number unique per instance
 - Monitor memory and number of threads consumed by this service (on demand)
 - For testing purpose: can work without RabbitMQ with -DuseAmqp=false. In this case output is just printed to stdout
 
@@ -22,7 +21,6 @@ How to run locally: build a war and put it on Jetty (tested with Jetty 9.2) or r
 - Authorization server: -DauthServer=name:port. Defalut is localhot:9001
 - Output to log file (metrics-storage.log) or to RabbitMQ: -DuseAmqp=true/false. Default is false (print to log file)
 - RabbitMQ parameters: host, port, user, password, routing key: -DamqpHost, -DamqpPort, -DamqpUser, -DamqpPassword, -DamqpRoutingKey. Defaults are localhost, 5672, admin, "", events-indexer
-- Instance ID (not a part of default.properties) is used for making the timestamp unique; in local environment can be set with -DinstanceId=<number> parameter or just use 0 when not set. In fleet deployment set automatically.
 
 ## Data format
 - Input - see [gaia-adm/api-data-format](https://github.com/gaia-adm/api-data-format)

@@ -107,8 +107,4 @@ public interface CommonDeserializationUtils {
         return nextEvent;
     }
 
-    default Date generateDate(JsonNode node){
-        TimestampRandomizer.getInstance().nextNumber();
-        return javax.xml.bind.DatatypeConverter.parseDateTime(node.get("time").asText()).getTime();
-    }
 }

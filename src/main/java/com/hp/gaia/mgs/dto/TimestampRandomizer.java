@@ -1,12 +1,15 @@
 package com.hp.gaia.mgs.dto;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by belozovs on 7/26/2015.
  *
- * Create unique number running between 0 and 1000 (not included)
- * Used for making timestamp unique (by using the generated number as a nanoseconds part of the timestamp)
+ * Helper class to the timestamp unique
+ * partOfIp used to populate microseconds
+ * running number between 0 and 1000 used to populate nanoseconds
  *
  */
 
@@ -17,6 +20,8 @@ public class TimestampRandomizer {
 
     private static TimestampRandomizer instance;
 
+    private int partOfIp = 0;
+
     public static TimestampRandomizer getInstance(){
         if(instance == null){
             instance = new TimestampRandomizer();
@@ -24,7 +29,15 @@ public class TimestampRandomizer {
         return instance;
     }
 
-    private TimestampRandomizer() {}
+    private TimestampRandomizer() {
+        try {
+            String addr = InetAddress.getLocalHost().getHostAddress();
+            int startPos = addr.lastIndexOf(".");
+            partOfIp = Integer.valueOf(addr.substring(startPos+1));
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
 
     public int nextNumber() {
         for (;;) {
@@ -35,5 +48,9 @@ public class TimestampRandomizer {
         }
     }
 
+
+    public int getPartOfIp() {
+        return partOfIp;
+    }
 
 }
