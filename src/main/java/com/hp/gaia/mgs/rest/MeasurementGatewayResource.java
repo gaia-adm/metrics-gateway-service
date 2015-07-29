@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.gaia.mgs.dto.BaseEvent;
 import com.hp.gaia.mgs.dto.OldMetric;
+import com.hp.gaia.mgs.rest.context.TenantContextHolder;
 import com.hp.gaia.mgs.services.MetricsCollectorService;
 import com.hp.gaia.mgs.services.PropertiesKeeperService;
 import com.hp.gaia.mgs.spring.MultiTenantOAuth2Authentication;
@@ -134,15 +135,16 @@ public class MeasurementGatewayResource {
     @Path("/event")
     public void publishEvent(@Context HttpServletRequest request, @Suspended final AsyncResponse response, String jsonEvents) throws ExecutionException, InterruptedException, IOException {
 
-        Map tenantDetails = ((MultiTenantOAuth2Authentication) SecurityContextHolder.getContext().getAuthentication()).getTenantDetails();
+        String tenantId = TenantContextHolder.getInstance().getTenantIdLocal();
+        TenantContextHolder.getInstance().setTenantIdLocal(null);
 
 
         CompletableFuture.supplyAsync(() -> {
             if (useAmqp) {
                 try {
                     List<BaseEvent> receivedEvents = new ObjectMapper().readValue(jsonEvents, new TypeReference<List<BaseEvent>>() {});
-                    System.out.println("Tenant " + tenantDetails.get("tenantId") + " Got result, number of points: " + receivedEvents.size());
-                    metricsCollector.publishEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
+                    System.out.println("Tenant " + tenantId + " Got result, number of points: " + receivedEvents.size());
+                    metricsCollector.publishEvent(receivedEvents, tenantId);
                     return null;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -151,8 +153,8 @@ public class MeasurementGatewayResource {
             } else {
                 try {
                     List<BaseEvent> receivedEvents = new ObjectMapper().readValue(jsonEvents, new TypeReference<List<BaseEvent>>() {});
-                    System.out.println("Tenant " + tenantDetails.get("tenantId") + " Got result, number of points: " + receivedEvents.size());
-                    metricsCollector.storeEvent(receivedEvents, String.valueOf(tenantDetails.get("tenantId")));
+                    System.out.println("Tenant " + tenantId + " Got result, number of points: " + receivedEvents.size());
+                    metricsCollector.storeEvent(receivedEvents, tenantId);
                     return null;
                 } catch (Exception e) {
                     e.printStackTrace();

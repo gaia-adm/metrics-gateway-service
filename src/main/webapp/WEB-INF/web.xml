@@ -63,6 +63,11 @@
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
         <async-supported>true</async-supported>
     </filter>
+    <filter>
+        <filter-name>TenantContextFilter</filter-name>
+        <filter-class>com.hp.gaia.mgs.rest.filters.TenantContextFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
     <filter-mapping>
         <filter-name>InputFilter</filter-name>
         <url-pattern>/rest/v1/gateway/*</url-pattern>
@@ -71,6 +76,10 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <!--<url-pattern>/rest/v1/gateway/*</url-pattern>-->
         <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>TenantContextFilter</filter-name>
+        <url-pattern>/rest/v1/gateway/*</url-pattern>
     </filter-mapping>
 
     <!--    <welcome-file-list>

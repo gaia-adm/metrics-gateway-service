@@ -1,5 +1,6 @@
 package com.hp.gaia.mgs.spring;
 
+import com.hp.gaia.mgs.rest.context.TenantContextHolder;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
 
@@ -7,6 +8,7 @@ import java.util.Map;
 
 /**
  * Created by belozovs on 6/25/2015.
+ * 
  */
 public class MultiTenantAccessTokenConverter extends DefaultAccessTokenConverter {
 
@@ -18,6 +20,11 @@ public class MultiTenantAccessTokenConverter extends DefaultAccessTokenConverter
 
         mauth.getTenantDetails().put("tenantId", map.get("tenantId"));
 
+        if(map.get("tenantId")!=null){
+            TenantContextHolder.getInstance().setTenantIdLocal(String.valueOf(map.get("tenantId")));
+        } else {
+            TenantContextHolder.getInstance().setTenantIdLocal(null);
+        }
 
         return mauth;
     }
