@@ -8,16 +8,43 @@ import java.util.Map;
  */
 public interface InfluxLineProtocolConverter<T extends BaseEvent> {
 
+    public final String DB_FIELD_PREFIX = "_";
+
     String convert(T event);
 
     /**
+     * Some characters must be escaped for InfluxDB based on https://influxdb.com/docs/v0.9/write_protocols/write_syntax.html
+     *
+     * @param str String to replace spaces, commas, double-quotes, quotes and an equal size
+     * @return String after the replacement
+     */
+    default String getEscapedString(String str) {
+        return str.replace(" ", "\\ ").replace(",", "\\,").replace("\"", "\\\"").replace("'", "\\'").replace("=","\\=");
+    }
+
+    /**
      * Following characters must be escaped for InfluxDB: spaces, commas and double-quotes
+     * Additionally, this method add a default prefix to every string in order to prevent InfluxDB reserved keywords
+     * in our (e.g., "from", "to") or customer's field names
      *
      * @param str String to replace spaces, commas and double-quotes
      * @return String after the replacement
      */
-    default String getEscapedString(String str) {
-        return str.replace("\"", "\\\"").replace(" ", "\\ ").replace(",", "\\,");
+    default String getEscapedStringWithPrefix(String str) {
+        return getEscapedStringWithPrefix(str, DB_FIELD_PREFIX);
+    }
+
+    /**
+     * Following characters must be escaped for InfluxDB: spaces, commas and double-quotes
+     * Additionally, this method add a provided prefix to every string in order to prevent InfluxDB reserved keywords
+     * in our (e.g., "from", "to") or customer's field names
+     *
+     * @param str String to replace spaces, commas and double-quotes
+     * @param prefix String to serve as a prefix
+     * @return String after the replacement
+     */
+    default String getEscapedStringWithPrefix(String str, String prefix) {
+        return prefix.concat(getEscapedString(str));
     }
 
     /**
@@ -72,12 +99,12 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
         StringBuilder sb = new StringBuilder();
         for (String key : event.getSource().keySet()) {
             if (event.getSource().get(key) != null) {
-                sb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getSource().get(key)));
+                sb.append(",").append(getEscapedStringWithPrefix(key)).append("=").append(getEscapedString(event.getSource().get(key)));
             }
         }
         for (String key : event.getTags().keySet()) {
             if (event.getSource().get(key) != null) {
-                sb.append(",").append(getEscapedString(key)).append("=").append(getEscapedString(event.getTags().get(key)));
+                sb.append(",").append(getEscapedStringWithPrefix(key)).append("=").append(getEscapedString(event.getTags().get(key)));
             }
         }
 
@@ -88,9 +115,9 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
         StringBuilder sb = new StringBuilder();
         for (String key : map.keySet()) {
             if (map.get(key) != null && map.get(key).getClass().equals(java.lang.String.class)) {
-                sb.append(getEscapedString(key)).append("=").append(getQuotedValue((String) map.get(key))).append(",");
+                sb.append(getEscapedStringWithPrefix(key)).append("=").append(getQuotedValue((String) map.get(key))).append(",");
             } else {
-                sb.append(getEscapedString(key)).append("=").append(map.get(key)).append(",");
+                sb.append(getEscapedStringWithPrefix(key)).append("=").append(map.get(key)).append(",");
             }
         }
         return sb.toString();

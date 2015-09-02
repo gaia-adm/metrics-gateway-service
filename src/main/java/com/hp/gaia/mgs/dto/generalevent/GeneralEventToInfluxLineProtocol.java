@@ -2,9 +2,6 @@ package com.hp.gaia.mgs.dto.generalevent;
 
 
 import com.hp.gaia.mgs.dto.InfluxLineProtocolConverter;
-import com.hp.gaia.mgs.dto.commit.CodeCommitEvent;
-
-import java.util.Map;
 
 /**
  * Created by belozovs on 7/22/2015.
@@ -32,7 +29,7 @@ public class GeneralEventToInfluxLineProtocol implements InfluxLineProtocolConve
             //create measurement and tags (tags, source)
             mainSb.append(getEscapedString(event.getType()));
             mainSb.append(createTags(event));
-            mainSb.append(",").append("dimension=general");
+            mainSb.append(",").append(DB_FIELD_PREFIX).append("dimension=general");
             //separator between measurement+tags and data part of the string
             mainSb.append(" ");
 

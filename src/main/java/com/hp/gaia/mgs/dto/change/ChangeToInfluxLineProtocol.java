@@ -41,7 +41,7 @@ public class ChangeToInfluxLineProtocol implements InfluxLineProtocolConverter<C
             mainSb.append(getEscapedString(event.getType()));
             mainSb.append(createTags(event));
             //add field name as a tag
-            mainSb.append(",").append("dimension=field");
+            mainSb.append(",").append(DB_FIELD_PREFIX).append("dimension=field");
 
             //separator between measurement+tags and data part of the string
             mainSb.append(" ");
@@ -60,7 +60,7 @@ public class ChangeToInfluxLineProtocol implements InfluxLineProtocolConverter<C
                 mainSb.append(getEscapedString(event.getType()));
                 mainSb.append(createTags(event));
                 //add "comment" as a tag
-                mainSb.append(",").append("dimension=comment");
+                mainSb.append(",").append(DB_FIELD_PREFIX).append("dimension=comment");
                 //separator between measurement+tags and data part of the string
                 mainSb.append(" ");
                 //create data part
@@ -80,7 +80,7 @@ public class ChangeToInfluxLineProtocol implements InfluxLineProtocolConverter<C
                 mainSb.append(getEscapedString(event.getType()));
                 mainSb.append(createTags(event));
                 //add "attachment" as a tag
-                mainSb.append(",").append("dimension=attachment");
+                mainSb.append(",").append(DB_FIELD_PREFIX).append("dimension=attachment");
                 //separator between measurement+tags and data part of the string
                 mainSb.append(" ");
                 //create data part
@@ -97,7 +97,7 @@ public class ChangeToInfluxLineProtocol implements InfluxLineProtocolConverter<C
                 mainSb.append(getEscapedString(event.getType()));
                 mainSb.append(createTags(event));
                 //add "step" as a tag
-                mainSb.append(",").append("dimension=step");
+                mainSb.append(",").append(DB_FIELD_PREFIX).append("dimension=step");
                 //separator between measurement+tags and data part of the string
                 mainSb.append(" ");
                 //create data part

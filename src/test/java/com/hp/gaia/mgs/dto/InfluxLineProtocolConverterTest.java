@@ -23,6 +23,22 @@ public class InfluxLineProtocolConverterTest {
         System.out.println(longerTimeString);
     }
 
+    @Test
+    public void testEscaping() throws Exception {
+        assertEquals("Check all required escaping", "this\\ is\\ it\\,\\ \\=\\ \\\"my\\\"\\ \\'test\\'", new ChangeToInfluxLineProtocol().getEscapedString("this is it, = \"my\" 'test'"));
+    }
+
+    @Test
+    public void testEscapingWithDefaultPrefix() throws Exception {
+        assertEquals("Check all required escaping", InfluxLineProtocolConverter.DB_FIELD_PREFIX + "this\\ is\\ it\\,\\ \\=\\ \\\"my\\\"\\ \\'test\\'", new ChangeToInfluxLineProtocol().getEscapedStringWithPrefix("this is it, = \"my\" 'test'"));
+    }
+
+    @Test
+    public void testEscapingWithNonDefaultPrefix() throws Exception {
+        String prefix = "aaa";
+        assertEquals("Check all required escaping", prefix + "this\\ is\\ it\\,\\ \\=\\ \\\"my\\\"\\ \\'test\\'", new ChangeToInfluxLineProtocol().getEscapedStringWithPrefix("this is it, = \"my\" 'test'", prefix));
+    }
+
 }
 
 

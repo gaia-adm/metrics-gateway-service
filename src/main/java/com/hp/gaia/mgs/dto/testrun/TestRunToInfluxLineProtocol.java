@@ -20,7 +20,7 @@ public class TestRunToInfluxLineProtocol implements InfluxLineProtocolConverter<
         mainSb.append(getEscapedString(event.getType()));
         mainSb.append(createTags(event));
         //add field name as a tag
-        mainSb.append(",").append("dimension=result");
+        mainSb.append(",").append(DB_FIELD_PREFIX).append("dimension=result");
         //separator between measurement+tags and data part of the string
         mainSb.append(" ");
         //create data part
@@ -36,7 +36,7 @@ public class TestRunToInfluxLineProtocol implements InfluxLineProtocolConverter<
             mainSb.append(getEscapedString(event.getType()));
             mainSb.append(createTags(event));
             //add field name as a tag
-            mainSb.append(",").append("dimension=test-step-result");
+            mainSb.append(",").append(DB_FIELD_PREFIX).append("dimension=test-step-result");
             //separator between measurement+tags and data part of the string
             mainSb.append(" ");
             //create data part
