@@ -103,7 +103,7 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
             }
         }
         for (String key : event.getTags().keySet()) {
-            if (event.getSource().get(key) != null) {
+            if (event.getTags().get(key) != null) {
                 sb.append(",").append(getEscapedStringWithPrefix(key)).append("=").append(getEscapedString(event.getTags().get(key)));
             }
         }
