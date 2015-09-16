@@ -75,10 +75,10 @@ public class InfluxLineProtocolConverterTest {
         String eventWithNoNewLineChars = bufferedReader.readLine();
         bufferedReader.close();
 
-        //cut TimestampRandomizer impact (nanoseconds is a running number)
-        String actualEvent = eventWithNoNewLineChars.substring(0, eventWithNoNewLineChars.length()-3);
+        //cut TimestampRandomizer impact (nanoseconds is a running number, microseconds are IP-based)
+        String actualEvent = eventWithNoNewLineChars.substring(0, eventWithNoNewLineChars.length()-6);
 
-        String expectedOutput = "general,_country=Spain,_city=Barcelona,_language=Catalan,_dimension=general _uuid=1111,_rainy=false,_temp=32 1442397531403165";
+        String expectedOutput = "general,_country=Spain,_city=Barcelona,_language=Catalan,_dimension=general _uuid=1111,_rainy=false,_temp=32 1442397531403";
         assertEquals("Expected output check", expectedOutput, actualEvent);
     }
 
