@@ -1,5 +1,7 @@
 package com.hp.gaia.mgs.dto;
 
+import com.fasterxml.jackson.databind.node.NullNode;
+
 import java.util.Map;
 
 /**
@@ -100,11 +102,17 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
         for (String key : event.getSource().keySet()) {
             if (event.getSource().get(key) != null) {
                 sb.append(",").append(getEscapedStringWithPrefix(key)).append("=").append(getEscapedString(event.getSource().get(key)));
+            } else {
+                // for null use "", since influxdb has no support for null and then we cannot query it
+                sb.append(",").append(getEscapedStringWithPrefix(key)).append("=\"\"");
             }
         }
         for (String key : event.getTags().keySet()) {
             if (event.getTags().get(key) != null) {
                 sb.append(",").append(getEscapedStringWithPrefix(key)).append("=").append(getEscapedString(event.getTags().get(key)));
+            } else {
+                // for null use "", since influxdb has no support for null and then we cannot query it
+                sb.append(",").append(getEscapedStringWithPrefix(key)).append("=\"\"");
             }
         }
 
@@ -116,6 +124,9 @@ public interface InfluxLineProtocolConverter<T extends BaseEvent> {
         for (String key : map.keySet()) {
             if (map.get(key) != null && map.get(key).getClass().equals(java.lang.String.class)) {
                 sb.append(getEscapedStringWithPrefix(key)).append("=").append(getQuotedValue((String) map.get(key))).append(",");
+            } else if (map.get(key) == null || map.get(key) instanceof NullNode) {
+                // for null use "", since influxdb has no support for null and then we cannot query it
+                sb.append(getEscapedStringWithPrefix(key)).append("=\"\",");
             } else {
                 sb.append(getEscapedStringWithPrefix(key)).append("=").append(map.get(key)).append(",");
             }

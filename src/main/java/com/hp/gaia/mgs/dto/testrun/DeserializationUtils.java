@@ -3,6 +3,8 @@ package com.hp.gaia.mgs.dto.testrun;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import jersey.repackaged.com.google.common.collect.Lists;
 
 import java.util.Iterator;
@@ -25,10 +27,10 @@ class DeserializationUtils {
                 String fieldName = fieldNames.next();
                 switch (fieldName) {
                     case "status":
-                        trr.setStatus(resultNode.get(fieldName).asText());
+                        trr.setStatus(getStringValue(resultNode, fieldName));
                         break;
                     case "error":
-                        trr.setErrorString(resultNode.get(fieldName).asText());
+                        trr.setErrorString(getStringValue(resultNode, fieldName));
                         break;
                     case "run_time":
                         trr.setRunTime(resultNode.get(fieldName).asLong());
@@ -41,6 +43,17 @@ class DeserializationUtils {
                 }
             }
             return trr;
+        }
+    }
+
+    static String getStringValue(JsonNode objectNode, String fieldName) {
+        JsonNode jsonNode = objectNode.get(fieldName);
+        if (jsonNode instanceof TextNode) {
+            return jsonNode.asText();
+        } else if (jsonNode instanceof NullNode || jsonNode == null) {
+            return null;
+        } else {
+            throw new IllegalStateException("Unexpected value type for field '" + fieldName + "'");
         }
     }
 

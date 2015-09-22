@@ -2,6 +2,7 @@ package com.hp.gaia.mgs.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.hp.gaia.mgs.dto.change.IssueChangeEvent;
 import com.hp.gaia.mgs.dto.commit.CodeCommitEvent;
 import com.hp.gaia.mgs.dto.testrun.AlmTestRunEvent;
@@ -24,14 +25,17 @@ public interface CommonDeserializationUtils {
     /**
      * Fill a map with data from mapType element of json node
      */
-
     default int fillStringMap(Map<String, String> map, String mapType, JsonNode node){
 
         if(node.get(mapType) != null) {
             Iterator<Map.Entry<String, JsonNode>> fields = node.get(mapType).fields();
             while (fields.hasNext()) {
                 Map.Entry<String, JsonNode> field = fields.next();
-                map.put(field.getKey(), field.getValue().asText());
+                if (field.getValue() instanceof NullNode) {
+                    map.put(field.getKey(), null);
+                } else {
+                    map.put(field.getKey(), field.getValue().asText());
+                }
             }
         }
         return map.size();
