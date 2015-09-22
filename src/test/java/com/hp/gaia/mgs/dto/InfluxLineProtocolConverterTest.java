@@ -5,6 +5,7 @@ import com.hp.gaia.mgs.dto.change.ChangeToInfluxLineProtocol;
 import com.hp.gaia.mgs.dto.generalevent.GeneralEvent;
 import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
 import org.junit.Test;
+import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
@@ -98,9 +99,22 @@ public class InfluxLineProtocolConverterTest {
 
         //cut TimestampRandomizer impact (nanoseconds is a running number, microseconds are IP-based)
         String actualEvent = eventWithNoNewLineChars.substring(0, eventWithNoNewLineChars.length()-6);
-
-        String expectedOutput = "code_testrun,_job_name=test-executor,_source_type=jenkins,_source_null=\"\",_build_result=UNSTABLE,_null_tag=\"\",_dimension=result _package=\"com.sample.configuration\",_method=\"run[0]\",_class=\"SanityStories\",_runTime=884,_failed_since=0,_status=\"PASSED\",_skipped=false,_skipped_message=\"\" 1439774162000";
-        assertEquals("Expected output check", expectedOutput, actualEvent);
+        // due to maps we cannot test whole string
+        assertTrue(actualEvent.contains("code_testrun"));
+        assertTrue(actualEvent.contains("_job_name=test-executor"));
+        assertTrue(actualEvent.contains("_source_type=jenkins"));
+        assertTrue(actualEvent.contains("_source_null=\"\""));
+        assertTrue(actualEvent.contains("_build_result=UNSTABLE"));
+        assertTrue(actualEvent.contains("_null_tag=\"\""));
+        assertTrue(actualEvent.contains("_dimension=result"));
+        assertTrue(actualEvent.contains("_package=\"com.sample.configuration\""));
+        assertTrue(actualEvent.contains("_class=\"SanityStories\""));
+        assertTrue(actualEvent.contains("_runTime=884"));
+        assertTrue(actualEvent.contains("_failed_since=0"));
+        assertTrue(actualEvent.contains("_status=\"PASSED\""));
+        assertTrue(actualEvent.contains("_skipped=false"));
+        assertTrue(actualEvent.contains("_skipped_message=\"\""));
+        assertTrue(actualEvent.contains("1439774162000"));
     }
 
     private final String codeTestrun = "{\n" +
