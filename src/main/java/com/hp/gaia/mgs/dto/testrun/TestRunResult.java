@@ -56,10 +56,10 @@ class TestRunResult {
         Map<String, Object> map = new HashMap<>();
         map.put("status", status);
         if(runTime!=null){
-            map.put("runtTime", runTime);
+            map.put("runTime", runTime);
         }
         if(errorString!=null) {
-            map.put("erorString", errorString);
+            map.put("errorString", errorString);
         }
         map.putAll(customFields);
         return map;
