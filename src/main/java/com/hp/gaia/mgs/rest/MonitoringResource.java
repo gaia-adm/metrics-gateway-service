@@ -4,6 +4,7 @@ import com.hp.gaia.mgs.services.MonitoringService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.lang.management.ManagementFactory;
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Path("/monitor")
+@Singleton
 public class MonitoringResource {
 
     private final static Logger logger = LoggerFactory.getLogger(MonitoringResource.class);

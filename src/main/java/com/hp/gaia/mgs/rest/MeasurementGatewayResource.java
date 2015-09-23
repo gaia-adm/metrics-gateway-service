@@ -11,6 +11,7 @@ import com.hp.gaia.mgs.services.PropertiesKeeperService;
 import com.hp.gaia.mgs.spring.MultiTenantOAuth2Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -31,6 +32,7 @@ import java.util.concurrent.ExecutionException;
  * Endpoint to get the collected events of all type
  */
 @Path("/v1/gateway")
+@Singleton
 public class MeasurementGatewayResource {
 
     MetricsCollectorService metricsCollector = new MetricsCollectorService();
