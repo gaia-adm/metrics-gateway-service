@@ -81,7 +81,8 @@ public class MetricsCollectorService {
             mainSb.append(converterFactory.getConverter(event.getType()).convert(event));
         }
 
-        logger.debug("Publishing event for tenant {}: {} ", tenantId, mainSb);
+        logger.debug("Publishing event for tenant {}: payload size is {} ", tenantId, mainSb.toString().length());
+        logger.trace("Publishing event for tenant {}: {} ", tenantId, mainSb);
 
         logger.info("Successfully published {} events for tenant {}.", events.size(), tenantId);
     }
@@ -115,7 +116,8 @@ public class MetricsCollectorService {
             mainSb.append(converterFactory.getConverter(event.getType()).convert(event));
         }
 
-        logger.debug("Publishing event for tenant {}: {} ", tenantId, mainSb);
+        logger.debug("Publishing event for tenant {}: payload size is {} ", tenantId, mainSb.toString().length());
+        logger.trace("Publishing event for tenant {}: {} ", tenantId, mainSb);
         amqpManager.getChannel().basicPublish("", amqpManager.getQueueName(), propsBuilder.build(), mainSb.toString().getBytes());
         logger.debug(" [v] Sent event for tenant {}. ", tenantId);
 
