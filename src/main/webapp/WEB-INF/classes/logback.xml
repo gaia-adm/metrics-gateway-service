@@ -68,14 +68,14 @@
     </logger>
 -->
 
-    <logger name="com.hp.gaia.mgs" level="debug" additivity="false">
-        <!--<appender-ref ref="mgs" />-->
+<!--    <logger name="com.hp.gaia.mgs" level="debug" additivity="false">
+        &lt;!&ndash;<appender-ref ref="mgs" />&ndash;&gt;
         <appender-ref ref="STDOUT" />
     </logger>
 
     <logger name="org.springframework" level="error" additivity="false">
         <appender-ref ref="STDOUT"/>
-    </logger>
+    </logger>-->
 
     <root level="error">
         <appender-ref ref="STDOUT" />

@@ -3,6 +3,9 @@ package com.hp.gaia.mgs.rest;
 import com.hp.gaia.mgs.services.MonitoringService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import org.springframework.util.StringUtils;
+
 
 import javax.inject.Singleton;
 import javax.ws.rs.*;
@@ -75,5 +78,59 @@ public class MonitoringResource {
 
         return Response.status(Response.Status.OK).entity(sb.toString()).build();
     }
+
+    /**
+     * Partial or temporary solution for dynamically changing root log level
+     * This operation introduces additional security breach as well as other operations in this resource
+     * It should be either replaced with different approach (preferably adjusted with other java-based services)
+     * or protected with special (administrator/tenant 0) token or user name
+     * @param level one of following case-insensitive values: trace, debug, info, warn, error (default level)
+     * @return string with the level that was actually set
+     */
+    @GET
+    @Path("/log/{level}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public Response setLogLevel(@PathParam("level") String level){
+
+        Logger root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) root;
+        rootLogger.setLevel(getLogLevel(level));
+
+        return Response.status(Response.Status.OK).entity("Log level set to " + rootLogger.getLevel().toString()).build();
+    }
+
+    private Level getLogLevel(String levelString){
+
+        Level level;
+
+        if(StringUtils.isEmpty(levelString)){
+            levelString="";
+        }
+
+        switch (levelString.toLowerCase()){
+            case "trace":
+                level=Level.TRACE;
+                break;
+            case "debug":
+                level=Level.DEBUG;
+                break;
+            case "info":
+                level=Level.INFO;
+                break;
+            case "warning":
+                level=Level.WARN;
+                break;
+            case "eror":
+                level=Level.ERROR;
+                break;
+            default:
+                level=Level.ERROR;
+                break;
+        }
+
+        return level;
+    }
+
 
 }
