@@ -12,13 +12,14 @@ dependencies:
     - docker build -t gaiaadm/mgs .
 test:
   override:
-    - docker run -d -p 9002:8080 gaiaadm/mgs:$BUILD_TAG; sleep 10
-# docker run -d --link sts:sts -e useAmqp=true -e authServer=sts:8080 -p 9002:8080 --name mgs gaiaadm/mgs
+    - docker run -d -p 9002:8080 gaiaadm/mgs; sleep 10
+    # docker run -d --link sts:sts -e useAmqp=true -e authServer=sts:8080 -p 9002:8080 --name mgs gaiaadm/mgs
     - curl -i http://localhost:9002/mgs/ | grep "200 OK"
 deployment:
   hub:
     branch: master
     commands:
+      - docker tag gaiaadm/test-webhook gaiaadm/test-webhook:$CIRCLE_BUILD_NUM
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push gaiaadm/mgs
 general:
