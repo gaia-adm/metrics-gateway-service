@@ -10,6 +10,7 @@ dependencies:
     - docker cp build-cont:/usr/local/gaia/target/mgs.war ./target/mgs.war
     - cp Dockerfile.run Dockerfile
     - docker build -t gaiaadm/mgs .
+    - docker tag gaiaadm/mgs gaiaadm/mgs:$CIRCLE_BUILD_NUM
 test:
   override:
     - docker run -d -p 9002:8080 gaiaadm/mgs; sleep 10
@@ -19,7 +20,6 @@ deployment:
   hub:
     branch: master
     commands:
-      - docker tag gaiaadm/mgs gaiaadm/mgs:$CIRCLE_BUILD_NUM
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push gaiaadm/mgs
 general:
