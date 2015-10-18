@@ -45,9 +45,9 @@ class DeserializationUtils {
             }
         }
 
-        if (StringUtils.isEmpty(innerField.getName()) || StringUtils.isEmpty(innerField.getTo())) {
-            logger.error("Empty data provided for field 'name' or 'to' attribute: {}", fieldNode);
-            throw new RuntimeException("Incomplete data provided: 'name' and 'to' attributes are mandatory for all fields");
+        if (StringUtils.isEmpty(innerField.getName()) || innerField.getTo() == null) {
+            logger.error("Empty or missing data provided for field 'name' or 'to' attributes: {}", fieldNode);
+            throw new RuntimeException("Incomplete data provided: 'name' and 'to' attributes are mandatory for all fields; 'name' must not be empty also");
         }
 
         return innerField;
