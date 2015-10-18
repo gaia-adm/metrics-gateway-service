@@ -25,7 +25,7 @@ deployment:
 notify:
   webhooks:
     # Notify GaiaCD to deploy the updated service
-    - url: http://94.230.85.208:9000/develop/mgs
+    - url: http://94.230.85.208:9000/deployment/develop/mgs
 general:
   branches:
     only:
