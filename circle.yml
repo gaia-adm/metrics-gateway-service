@@ -22,6 +22,10 @@ deployment:
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push gaiaadm/mgs
+notify:
+  webhooks:
+    # Notify GaiaCD to deploy the updated service
+    - url: http://94.230.85.208/develop/mgs
 general:
   branches:
     only:
