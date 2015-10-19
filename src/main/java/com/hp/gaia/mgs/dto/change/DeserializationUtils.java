@@ -31,16 +31,16 @@ class DeserializationUtils {
                 case "name":
                     break;
                 case "to":
-                    innerField.setTo(fieldNode.get(curSubFieldName).asText());
+                    innerField.setTo(new ChangeToInfluxLineProtocol().getEscapedString(fieldNode.get(curSubFieldName).asText()));
                     break;
                 case "from":
-                    innerField.setFrom(fieldNode.get(curSubFieldName).asText());
+                    innerField.setFrom(new ChangeToInfluxLineProtocol().getEscapedString(fieldNode.get(curSubFieldName).asText()));
                     break;
                 case "ttc":
                     innerField.setTtc(fieldNode.get(curSubFieldName).asLong());
                     break;
                 default:
-                    innerField.addCustomField(curSubFieldName, fieldNode.get(curSubFieldName).asText());
+                    innerField.addCustomField(curSubFieldName, new ChangeToInfluxLineProtocol().getEscapedString(fieldNode.get(curSubFieldName).asText()));
                     break;
             }
         }
