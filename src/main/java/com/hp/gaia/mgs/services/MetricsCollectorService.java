@@ -78,7 +78,9 @@ public class MetricsCollectorService {
 
         InfluxLineProtocolConverterFactory converterFactory = new InfluxLineProtocolConverterFactory();
         for (T event : events) {
-            mainSb.append(converterFactory.getConverter(event.getType()).convert(event));
+            if(event != null) {
+                mainSb.append(converterFactory.getConverter(event.getType()).convert(event));
+            }
         }
 
         logger.debug("Publishing event for tenant {}: payload size is {} ", tenantId, mainSb.toString().length());

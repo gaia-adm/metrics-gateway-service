@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by belozovs on 7/15/2015.
@@ -29,15 +30,26 @@ public class IssueChangeDeserializer extends JsonDeserializer<IssueChangeEvent> 
 
         DeserializationUtils du = new DeserializationUtils();
 
-        Iterator<JsonNode> fieldNodes = node.get("fields").elements();
-        while (fieldNodes.hasNext()) {
-            JsonNode fieldNode = fieldNodes.next();
-            ice.addField(du.fetchIssueField(fieldNode));
-        }
-
         fillObjectMap(ice.getId(), "id", node);
         fillStringMap(ice.getSource(), "source", node);
         fillStringMap(ice.getTags(), "tags", node);
+
+        if(node.get("fields") == null) {
+            Map<String, Object> idMap = ice.getId();
+            StringBuffer sbId = new StringBuffer();
+            for(String key : idMap.keySet()) {
+                sbId.append(key).append(": ").append(idMap.get(key)).append(" ");
+            }
+            logger.warn("Empty fields section - ignoring event " + sbId.toString());
+            return null;
+        } else {
+            Iterator<JsonNode> fieldNodes = node.get("fields").elements();
+            while (fieldNodes.hasNext()) {
+                JsonNode fieldNode = fieldNodes.next();
+                ice.addField(du.fetchIssueField(fieldNode));
+            }
+        }
+
 
         ice.setComments(du.fetchMultipleMaps(node, "comments"));
 
