@@ -19,7 +19,7 @@ public class InputFilter implements Filter {
     Logger logger = LoggerFactory.getLogger(InputFilter.class);
 
     private final static int MINIMAL_REQUEST_SIZE=10;
-    private final static int MAXIMAL_REQUEST_SIZE=102400;
+    private final static int MAXIMAL_REQUEST_SIZE=512000;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
