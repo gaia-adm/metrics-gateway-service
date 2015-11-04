@@ -7,6 +7,7 @@ dependencies:
     - cp Dockerfile.build Dockerfile
     - docker build -t build-img .
     - docker create --name build-cont build-img
+    - mkdir -p ./target
     - docker cp build-cont:/usr/local/gaia/target/mgs.war ./target/mgs.war
     - cp Dockerfile.run Dockerfile
     - docker build -t gaiaadm/mgs .
