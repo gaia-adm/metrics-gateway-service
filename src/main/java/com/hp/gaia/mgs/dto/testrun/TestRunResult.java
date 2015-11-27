@@ -7,7 +7,7 @@ import java.util.*;
  * Created by belozovs on 7/16/2015.
  * Base class for all kinds of TestRunResults: either manual (ALM) or automatic test
  */
-class TestRunResult {
+public class TestRunResult {
 
     @NotNull
     private String status;
