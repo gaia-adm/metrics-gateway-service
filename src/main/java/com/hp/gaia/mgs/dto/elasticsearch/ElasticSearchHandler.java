@@ -21,7 +21,7 @@ public class ElasticSearchHandler {
     * Bulk format composed of: action/n data/n action/n data/
     * More info here: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
     * */
-    public <T extends BaseEvent> byte[] convert(Collection<T> events) throws JsonProcessingException {
+    public <T extends BaseEvent> byte[] convert(Collection<T> events, String tenantId) throws JsonProcessingException {
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -56,17 +56,17 @@ public class ElasticSearchHandler {
             }
         }
 
-        byte[] actionInESFormat = getAction();
+        byte[] actionInESFormat = getAction(tenantId);
         byte[] allTogether = combineAll(actionInESFormat, eventsInESFormat);
         return allTogether;
 
     }
 
     //Prepare the action json
-    private byte[] getAction() throws JsonProcessingException {
+    private byte[] getAction(String tenantId) throws JsonProcessingException {
         Map actionMap = new HashMap<String, String>();
         Map actionPropsMap = new HashMap<String, String>();
-        actionPropsMap.put("_index", TenantContextHolder.getInstance().getTenantIdLocal());
+        actionPropsMap.put("_index", tenantId);
         actionPropsMap.put("_type", CodeTestRunEvent.EVENT_TYPE);
         actionMap.put("index", actionPropsMap);
         ObjectMapper actionMapper = new ObjectMapper();

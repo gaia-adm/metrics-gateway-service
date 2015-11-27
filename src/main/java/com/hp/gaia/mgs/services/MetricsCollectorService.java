@@ -82,7 +82,7 @@ public class MetricsCollectorService {
     * */
     private <T extends BaseEvent> void handleEs(Collection<T> events, String tenantId) throws IOException, TimeoutException {
         ElasticSearchHandler esHandler = new ElasticSearchHandler();
-        byte[] output = esHandler.convert(events);
+        byte[] output = esHandler.convert(events, tenantId);
 
         logger.debug("Publishing elasticSearch events for tenant {}: payload size is {} ", tenantId, output.length);
         logger.trace("Publishing elasticSearch events for tenant {}: {} ", tenantId, new String(output, "UTF-8"));
