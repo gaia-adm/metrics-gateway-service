@@ -45,8 +45,6 @@ public class MeasurementGatewayResource {
     public void publishEvent(@Context HttpServletRequest request, @Suspended final AsyncResponse response, String jsonEvents) throws ExecutionException, InterruptedException, IOException {
 
         String tenantId = TenantContextHolder.getInstance().getTenantIdLocal();
-        TenantContextHolder.getInstance().setTenantIdLocal(null);
-
 
         CompletableFuture.supplyAsync(() -> {
             try {
