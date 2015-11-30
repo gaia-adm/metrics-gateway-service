@@ -50,7 +50,7 @@ public class ElasticSearchHandler {
                 codeTestRunEvent.getResult().getMembersAsMap().entrySet().
                         forEach(key -> propsMap.put(key, codeTestRunEvent.getResult().getMembersAsMap().get(key)));
 
-                propsMap.put("time", codeTestRunEvent.getTime());
+                propsMap.put("timestamp", codeTestRunEvent.getTime());
 
                 eventsInESFormat.add(mapper.writeValueAsBytes(propsMap));
             }
