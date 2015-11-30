@@ -15,34 +15,52 @@ import java.util.concurrent.TimeoutException;
 
 public class AmqpManager {
 
-    private static String MQ_SERVER_NAME, MQ_SERVER_USERNAME, MQ_SERVER_PASSWORD, QUEUE_NAME;
+    private static String MQ_SERVER_NAME, MQ_SERVER_USERNAME, MQ_SERVER_PASSWORD, INFLUXDB_QUEUE_NAME, ES_QUEUE_NAME;
     private static Integer MQ_SERVER_PORT;
 
-    private Channel channel = null;
+    private Channel influxDbChannel = null;
+    private Channel esChannel = null;
+
 
     public AmqpManager() throws IOException {
         MQ_SERVER_NAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpHost");
         MQ_SERVER_PORT = Integer.parseInt(PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpPort"));
         MQ_SERVER_USERNAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpUser");
         MQ_SERVER_PASSWORD = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpPassword");
-        QUEUE_NAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpRoutingKey");
+        INFLUXDB_QUEUE_NAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpInfluxdbRoutingKey");
+        ES_QUEUE_NAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpElasticSearchRoutingKey");
 
-        System.out.println("MQ details: " + MQ_SERVER_NAME + ":" + MQ_SERVER_PORT + ":" + QUEUE_NAME);
+        System.out.println("MQ details: " + MQ_SERVER_NAME + ":" + MQ_SERVER_PORT + ":" +
+                INFLUXDB_QUEUE_NAME + "(influxdb):" + ES_QUEUE_NAME + "(elasticsearch)");
 
     }
 
-    public Channel getChannel() throws IOException, TimeoutException {
-        if (channel == null) {
+    public Channel getInfluxDbChannel() throws IOException, TimeoutException {
+        if (influxDbChannel == null) {
             ConnectionFactory factory = createConnectionFactory();
             Connection connection = factory.newConnection();
-            channel = connection.createChannel();
-            channel.queueDeclare(QUEUE_NAME, true, false, false, null); //durable, non-exclusive, no auto-delete
+            influxDbChannel = connection.createChannel();
+            influxDbChannel.queueDeclare(INFLUXDB_QUEUE_NAME, true, false, false, null); //durable, non-exclusive, no auto-delete
         }
-        return channel;
+        return influxDbChannel;
     }
 
-    public String getQueueName() {
-        return QUEUE_NAME;
+    public String getInfluxDbQueueName() {
+        return INFLUXDB_QUEUE_NAME;
+    }
+
+    public Channel getEsChannel() throws IOException, TimeoutException {
+        if (esChannel == null) {
+            ConnectionFactory factory = createConnectionFactory();
+            Connection connection = factory.newConnection();
+            esChannel = connection.createChannel();
+            esChannel.queueDeclare(ES_QUEUE_NAME, true, false, false, null); //durable, non-exclusive, no auto-delete
+        }
+        return esChannel;
+    }
+
+    public String getEsQueueName() {
+        return ES_QUEUE_NAME;
     }
 
     private ConnectionFactory createConnectionFactory() {

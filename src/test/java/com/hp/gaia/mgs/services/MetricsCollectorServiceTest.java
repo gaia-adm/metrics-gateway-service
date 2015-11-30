@@ -49,7 +49,7 @@ public class MetricsCollectorServiceTest {
         eventList.add(createIssueChangeEvent("aaa"));
         eventList.add(createIssueChangeEvent("bbb"));
 
-        when(amqpManager.getChannel()).thenReturn(channel);
+        when(amqpManager.getInfluxDbChannel()).thenReturn(channel);
         //void method do nothing by default - keep it here just for the reference
         // doNothing().when(channel).basicPublish(anyString(), anyString(), anyObject(), anyObject());
 
