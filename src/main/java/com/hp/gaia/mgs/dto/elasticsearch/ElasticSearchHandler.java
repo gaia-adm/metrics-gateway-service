@@ -75,7 +75,7 @@ public class ElasticSearchHandler {
 
     //Combine all of the byte arrays to big one with '/n' separator
     private byte[] combineAll(byte[] actionInESFormat, List<byte[]> eventsInESFormat) {
-        byte[] lineSeparator = System.lineSeparator().getBytes();
+        byte[] lineSeparator = "\n".getBytes();
 
         int size=0;
         for(byte[] array: eventsInESFormat)
