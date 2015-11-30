@@ -28,6 +28,6 @@ public class ElasticSearchHandlerTest {
 
         String outputString = new String(output, "UTF-8");
         assertEquals("number of '\\n' should be 2", 2, StringUtils.countOccurrencesOf(outputString, "\n"));
-        assertEquals("time field should be presented", 1, StringUtils.countOccurrencesOf(outputString, "\"time\":"));
+        assertEquals("time field should be presented", 1, StringUtils.countOccurrencesOf(outputString, "\"timestamp\":"));
     }
 }
