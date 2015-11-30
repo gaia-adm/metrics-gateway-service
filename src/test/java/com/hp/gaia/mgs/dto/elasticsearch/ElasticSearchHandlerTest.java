@@ -24,10 +24,10 @@ public class ElasticSearchHandlerTest {
         receivedEvent = new ObjectMapper().readValue(jsonEvent, new TypeReference<List<BaseEvent>>(){});
 
         ElasticSearchHandler esh = new ElasticSearchHandler();
-        byte[] output = esh.convert(receivedEvent);
+        byte[] output = esh.convert(receivedEvent, "tenant_123");
 
         String outputString = new String(output, "UTF-8");
-        assertEquals("number of '\\n' should be 2", 2, StringUtils.countOccurrencesOf(outputString, System.lineSeparator()));
+        assertEquals("number of '\\n' should be 2", 2, StringUtils.countOccurrencesOf(outputString, "\n"));
         assertEquals("time field should be presented", 1, StringUtils.countOccurrencesOf(outputString, "\"time\":"));
     }
 }
