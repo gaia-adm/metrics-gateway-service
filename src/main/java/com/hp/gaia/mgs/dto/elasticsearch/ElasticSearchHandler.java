@@ -66,7 +66,7 @@ public class ElasticSearchHandler {
     private byte[] getAction(String tenantId) throws JsonProcessingException {
         Map actionMap = new HashMap<String, String>();
         Map actionPropsMap = new HashMap<String, String>();
-        actionPropsMap.put("_index", tenantId);
+        actionPropsMap.put("_index", "gaia_" + tenantId);
         actionPropsMap.put("_type", CodeTestRunEvent.EVENT_TYPE);
         actionMap.put("index", actionPropsMap);
         ObjectMapper actionMapper = new ObjectMapper();
