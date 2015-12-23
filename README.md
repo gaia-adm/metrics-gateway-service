@@ -14,7 +14,7 @@ How to run locally: build a war and put it on Jetty (tested with Jetty 9.2) or r
 
 ## Prerequisites:
 - Authorization server (https://github.com/gaia-adm/auth-server) must be running in order to allow publishing
-- (Optional) RabbitMQ
+- RabbitMQ for publishing data
 
 ## Customization
 - Based on default.properties file, can be reset with -D parameters.
