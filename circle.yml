@@ -30,7 +30,7 @@ deployment:
       - docker push gaiaadm/mgs
 notify:
   webhooks:
-    - url: https://boris.gaiahub.io:444/wh/f72a2648-8dca-4bca-b92d-1a75a21e8f66/00f317ea3de099687860843ec7f2266bcc81dad0
+    - url: http://boris.gaiahub.io:88/wh/f72a2648-8dca-4bca-b92d-1a75a21e8f66/00f317ea3de099687860843ec7f2266bcc81dad0
 general:
   branches:
     only:
