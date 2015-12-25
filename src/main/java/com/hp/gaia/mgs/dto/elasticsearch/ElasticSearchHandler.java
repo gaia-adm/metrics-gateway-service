@@ -1,13 +1,16 @@
 package com.hp.gaia.mgs.dto.elasticsearch;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.gaia.mgs.dto.BaseEvent;
-import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
-import com.hp.gaia.mgs.rest.context.TenantContextHolder;
+import com.hp.gaia.mgs.dto.change.ChangeEvent;
+import com.hp.gaia.mgs.dto.change.InnerField;
+import com.hp.gaia.mgs.dto.change.IssueChangeEvent;
+import com.hp.gaia.mgs.dto.change.TestChangeEvent;
+import com.hp.gaia.mgs.dto.commit.CodeCommitEvent;
+import com.hp.gaia.mgs.dto.generalevent.GeneralEvent;
+import com.hp.gaia.mgs.dto.testrun.TestRunEvent;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.*;
 
@@ -26,83 +29,132 @@ public class ElasticSearchHandler {
         ObjectMapper mapper = new ObjectMapper();
 
         //Go over the events and convert them to ES format
-        List<byte[]> eventsInESFormat = new ArrayList<byte[]>();
+        List<EsPair> esEvents = new ArrayList<EsPair>();
         for (T event : events) {
 
-            Map propsMap = new HashMap<String, String>();
+            if (event != null) {
+                Map propsMap = new HashMap<String, String>();
 
-            // for now we handle only code_testrun events
-            if ((event != null)
-                   && event.getType().equals(CodeTestRunEvent.EVENT_TYPE)
-                   && (event instanceof CodeTestRunEvent)) {
+                propsMap.put("timestamp", event.getTime());
+                propsMap.put("source", event.getSource());
+                propsMap.put("tags", event.getTags());
+                propsMap.put("id", event.getId());
 
-                CodeTestRunEvent codeTestRunEvent = (CodeTestRunEvent) event;
+                addSpecificTypeData(event, propsMap);
 
-                codeTestRunEvent.getSource().keySet().
-                        forEach(key -> propsMap.put(key, codeTestRunEvent.getSource().get(key)));
-
-                codeTestRunEvent.getTags().keySet().
-                        forEach(key -> propsMap.put(key, codeTestRunEvent.getTags().get(key)));
-
-                codeTestRunEvent.getId().keySet().
-                        forEach(key -> propsMap.put(key, codeTestRunEvent.getId().get(key)));
-
-                codeTestRunEvent.getResult().getMembersAsMap().entrySet().
-                        forEach(key -> propsMap.put(key, codeTestRunEvent.getResult().getMembersAsMap().get(key)));
-
-                propsMap.put("timestamp", codeTestRunEvent.getTime());
-
-                eventsInESFormat.add(mapper.writeValueAsBytes(propsMap));
+                byte[] esAction = getAction(tenantId, event.getType());
+                byte[] esEvent = mapper.writeValueAsBytes(propsMap);
+                esEvents.add(new EsPair(esAction, esEvent));
             }
+
         }
 
-        byte[] actionInESFormat = getAction(tenantId);
-        byte[] allTogether = combineAll(actionInESFormat, eventsInESFormat);
+        byte[] allTogether = combineAll(esEvents);
         return allTogether;
 
     }
 
+    private <T extends BaseEvent> void addSpecificTypeData(T event, Map propsMap) {
+        if (event instanceof TestRunEvent) {
+            TestRunEvent testRunEvent = (TestRunEvent) event;
+            propsMap.put("result", testRunEvent.getResult());
+        }
+
+        if (event instanceof CodeCommitEvent) {
+            CodeCommitEvent codeCommitEvent = (CodeCommitEvent) event;
+            propsMap.put("changed_file", codeCommitEvent.getChangedFilesList());
+        }
+
+        if (event instanceof GeneralEvent) {
+            GeneralEvent generalEvent = (GeneralEvent) event;
+            propsMap.put("data", generalEvent.getData());
+        }
+
+        if (event instanceof ChangeEvent)
+        {
+            ChangeEvent changeEvent = (ChangeEvent) event;
+            List<Map<String, Object>> fieldsData = new ArrayList<>();
+            for (InnerField field: changeEvent.getFields()) {
+                fieldsData.add(field.getMembersAsMap());
+            }
+            propsMap.put("field",fieldsData);
+
+            if (changeEvent instanceof IssueChangeEvent)
+            {
+                IssueChangeEvent issueChangeEvent = (IssueChangeEvent) changeEvent;
+                propsMap.put("comment", issueChangeEvent.getComments());
+            }
+
+            if (changeEvent instanceof TestChangeEvent)
+            {
+                TestChangeEvent testChangeEvent = (TestChangeEvent) changeEvent;
+                propsMap.put("step",testChangeEvent.getSteps());
+            }
+        }
+    }
+
     //Prepare the action json
-    private byte[] getAction(String tenantId) throws JsonProcessingException {
+    private byte[] getAction(String tenantId, String eventType) throws JsonProcessingException {
         Map actionMap = new HashMap<String, String>();
         Map actionPropsMap = new HashMap<String, String>();
         actionPropsMap.put("_index", "gaia_" + tenantId);
-        actionPropsMap.put("_type", CodeTestRunEvent.EVENT_TYPE);
+        actionPropsMap.put("_type", eventType);
         actionMap.put("index", actionPropsMap);
         ObjectMapper actionMapper = new ObjectMapper();
         return actionMapper.writeValueAsBytes(actionMap);
     }
 
     //Combine all of the byte arrays to big one with '/n' separator
-    private byte[] combineAll(byte[] actionInESFormat, List<byte[]> eventsInESFormat) {
+    private byte[] combineAll(List<EsPair> eventsInESFormat) {
         byte[] lineSeparator = "\n".getBytes();
 
         int size=0;
-        for(byte[] array: eventsInESFormat)
-            size+=array.length;
-
-        size+=((lineSeparator.length*2)+actionInESFormat.length)*eventsInESFormat.size();
+        for(EsPair pair: eventsInESFormat) {
+            size += pair.getAction().length +
+                    pair.getEvent().length +
+                    (lineSeparator.length * 2);
+        }
 
         byte[] allTogether = new byte[size];
         ByteBuffer bf = ByteBuffer.wrap(allTogether);
-        for(byte[] singleEvent: eventsInESFormat) {
-            bf.put(actionInESFormat);
+        for(EsPair singleEvent: eventsInESFormat) {
+            bf.put(singleEvent.getAction());
             bf.put(lineSeparator);
-            bf.put(singleEvent);
+            bf.put(singleEvent.getEvent());
             bf.put(lineSeparator);
         }
         return allTogether;
     }
 
-    /*public static void main(String[] args) {
+    class EsPair
+    {
+        private byte[] action;
+        private byte[] event;
+
+        EsPair(byte[] action, byte[] event) {
+            this.action = action;
+            this.event = event;
+        }
+
+        byte[] getAction() {
+            return action;
+        }
+
+        byte[] getEvent() {
+            return event;
+        }
+
+    }
+
+    /* public static void main(String[] args) {
         String jsonEvents = "[{\"event\":\"code_testrun\",\"id\":{\"method\":\"test[418: combination of <[Passed, Pending, Passed, Passed]>]\",\"build_number\":\"29\",\"class\":\"ActivityStatusCommutativeTest\",\"package\":\"com.hp.alm.platform.dataflow\",\"root_build_number\":\"29\"},\"tags\":{\"scm_branch\":null,\"build_result\":\"UNSTABLE\",\"flow_type\":null,\"build_uri_path\":\"job/ALM-Newton-Compile-Server/29/\",\"schema_version\":null},\"result\":{\"status\":\"PASSED\",\"skipped\":false,\"run_time\":0,\"failed_since\":0,\"age\":0,\"error\":null,\"skipped_message\":null},\"source\":{\"root_job_name\":\"ALM-Newton-Compile-Server\",\"build_server_uri\":\"http://mydtbld0048.isr.hp.com:8888/jenkins\",\"job_name\":\"ALM-Newton-Compile-Server\",\"source_type\":\"jenkins\",\"build_server_host\":\"mydtbld0048.isr.hp.com\"},\"time\":\"2015-08-20T10:37:41\"}]";
         try {
             List<BaseEvent> receivedEvents = new ObjectMapper().readValue(jsonEvents, new TypeReference<List<BaseEvent>>() {
             });
             ElasticSearchHandler converter = new ElasticSearchHandler();
-            System.out.println("after conversion:" + new String(converter.convert(receivedEvents), "UTF-8"));
+            System.out.println("after conversion:" + new String(converter.convert(receivedEvents, "1234"), "UTF-8"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }*/
+    } */
 }
