@@ -9,6 +9,8 @@ import com.hp.gaia.mgs.dto.change.IssueChangeEvent;
 import com.hp.gaia.mgs.dto.change.TestChangeEvent;
 import com.hp.gaia.mgs.dto.commit.CodeCommitEvent;
 import com.hp.gaia.mgs.dto.generalevent.GeneralEvent;
+import com.hp.gaia.mgs.dto.testrun.AlmTestRunEvent;
+import com.hp.gaia.mgs.dto.testrun.CodeTestRunEvent;
 import com.hp.gaia.mgs.dto.testrun.TestRunEvent;
 
 import java.nio.ByteBuffer;
@@ -57,7 +59,12 @@ public class ElasticSearchHandler {
     private <T extends BaseEvent> void addSpecificTypeData(T event, Map propsMap) {
         if (event instanceof TestRunEvent) {
             TestRunEvent testRunEvent = (TestRunEvent) event;
-            propsMap.put("result", testRunEvent.getResult());
+            propsMap.put("result", testRunEvent.getResult().getMembersAsMap());
+
+            if (testRunEvent instanceof AlmTestRunEvent) {
+                AlmTestRunEvent almTestRunEvent = (AlmTestRunEvent) testRunEvent;
+                propsMap.put("testrun_step", almTestRunEvent.getResult().getSteps());
+            }
         }
 
         if (event instanceof CodeCommitEvent) {
