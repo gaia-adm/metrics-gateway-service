@@ -1,8 +1,4 @@
-[![](https://badge.imagelayers.io/gaiaadm/mgs:latest.svg)](https://imagelayers.io/?images=gaiaadm/mgs:latest 'Get your own badge on imagelayers.io')
-
-**CircleCI:** [![Circle CI](https://circleci.com/gh/gaia-adm/metrics-gateway-service.svg?style=svg)](https://circleci.com/gh/gaia-adm/metrics-gateway-service)
-
-[![Codacy Badge](https://api.codacy.com/project/badge/grade/ba9b93b4cc764eda8ef2774f6cb3b9ae)](https://www.codacy.com/app/alexei-led/metrics-gateway-service)
+[![Circle CI](https://circleci.com/gh/gaia-adm/metrics-gateway-service.svg?style=svg)](https://circleci.com/gh/gaia-adm/metrics-gateway-service) [![Codacy Badge](https://api.codacy.com/project/badge/grade/ba9b93b4cc764eda8ef2774f6cb3b9ae)](https://www.codacy.com/app/alexei-led/metrics-gateway-service) [![](https://badge.imagelayers.io/gaiaadm/mgs:latest.svg)](https://imagelayers.io/?images=gaiaadm/mgs:latest 'Get your own badge on imagelayers.io')
 
 # Metrics-gateway-service
 
