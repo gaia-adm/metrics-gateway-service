@@ -1,4 +1,6 @@
-CircleCI build status: [![Circle CI](https://circleci.com/gh/gaia-adm/metrics-gateway-service.svg?style=svg)](https://circleci.com/gh/gaia-adm/metrics-gateway-service)
+[![](https://badge.imagelayers.io/gaiaadm/mgs:latest.svg)](https://imagelayers.io/?images=gaiaadm/mgs:latest 'Get your own badge on imagelayers.io')
+
+*CircleCI:* [![Circle CI](https://circleci.com/gh/gaia-adm/metrics-gateway-service.svg?style=svg)](https://circleci.com/gh/gaia-adm/metrics-gateway-service)
 # Metrics-gateway-service
 
 How to run locally: build a war and put it on Jetty (tested with Jetty 9.2) or run mnn jetty:run
