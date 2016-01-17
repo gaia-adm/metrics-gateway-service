@@ -33,6 +33,8 @@ public class AmqpManager {
         System.out.println("MQ details: " + MQ_SERVER_NAME + ":" + MQ_SERVER_PORT + ":" +
                 INFLUXDB_QUEUE_NAME + "(influxdb):" + ES_QUEUE_NAME + "(elasticsearch)");
 
+        System.out.println("Hello from AmqpManager");
+
     }
 
     public Channel getInfluxDbChannel() throws IOException, TimeoutException {
