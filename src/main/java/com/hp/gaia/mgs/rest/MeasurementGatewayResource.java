@@ -38,7 +38,7 @@ public class MeasurementGatewayResource {
     MetricsCollectorService metricsCollector = new MetricsCollectorService();
 
     public MeasurementGatewayResource() throws IOException {
-        System.out.println("Starting mgs now");
+        System.out.println("Starting mgs abcdef");
     }
 
     @POST
