@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 
 public class AmqpManager {
 
-    private static String MQ_SERVER_NAME, MQ_SERVER_USERNAME, MQ_SERVER_PASSWORD, INFLUXDB_QUEUE_NAME, ES_QUEUE_NAME;
+    private static String MQ_SERVER_NAME, MQ_SERVER_USERNAME, MQ_SERVER_PASSWORD, INFLUXDB_QUEUE_NAME, MQ_EXCHANGE_NAME;
     private static Integer MQ_SERVER_PORT;
 
     private Channel influxDbChannel = null;
@@ -28,10 +28,10 @@ public class AmqpManager {
         MQ_SERVER_USERNAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpUser");
         MQ_SERVER_PASSWORD = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpPassword");
         INFLUXDB_QUEUE_NAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpInfluxdbRoutingKey");
-        ES_QUEUE_NAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpElasticSearchRoutingKey");
+        MQ_EXCHANGE_NAME = PropertiesKeeperService.getInstance().getEnvOrPropAsString("amqpExchangeName");
 
         System.out.println("MQ details: " + MQ_SERVER_NAME + ":" + MQ_SERVER_PORT + ":" +
-                INFLUXDB_QUEUE_NAME + "(influxdb):" + ES_QUEUE_NAME + "(elasticsearch)");
+                INFLUXDB_QUEUE_NAME + "(influxdb queue):" + MQ_EXCHANGE_NAME + "(mgs topic exchange)");
 
     }
 
@@ -54,14 +54,12 @@ public class AmqpManager {
             ConnectionFactory factory = createConnectionFactory();
             Connection connection = factory.newConnection();
             esChannel = connection.createChannel();
-            esChannel.queueDeclare(ES_QUEUE_NAME, true, false, false, null); //durable, non-exclusive, no auto-delete
+            esChannel.exchangeDeclare(MQ_EXCHANGE_NAME, "topic", true);
         }
         return esChannel;
     }
 
-    public String getEsQueueName() {
-        return ES_QUEUE_NAME;
-    }
+    public String getExchangeName() { return MQ_EXCHANGE_NAME; }
 
     private ConnectionFactory createConnectionFactory() {
         ConnectionFactory factory = new ConnectionFactory();

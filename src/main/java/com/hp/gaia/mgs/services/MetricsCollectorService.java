@@ -5,6 +5,7 @@ import com.hp.gaia.mgs.amqp.AmqpManager;
 import com.hp.gaia.mgs.dto.*;
 import com.hp.gaia.mgs.dto.elasticsearch.ElasticSearchHandler;
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.MessageProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,16 +83,27 @@ public class MetricsCollectorService {
     * */
     private <T extends BaseEvent> void handleEs(Collection<T> events, String tenantId) throws IOException, TimeoutException {
         ElasticSearchHandler esHandler = new ElasticSearchHandler();
-        byte[] output = esHandler.convert(events, tenantId);
 
-        logger.debug("Publishing elasticSearch events for tenant {}: payload size is {} ", tenantId, output.length);
-        logger.trace("Publishing elasticSearch events for tenant {}: {} ", tenantId, new String(output, "UTF-8"));
-        if (useAmqp) {
-            amqpManager.getEsChannel().basicPublish("", amqpManager.getEsQueueName(), null, output);
+        for (T event: events) {
+            byte[] output = esHandler.convert(event);
+
+            logger.debug("Publishing elasticSearch event for tenant {}: payload size is {} ", tenantId, output.length);
+            logger.trace("Publishing elasticSearch event for tenant {}: {} ", tenantId, new String(output, "UTF-8"));
+            if (useAmqp) {
+
+                //route key in the format of "event.TENANTID.DATASOURCE.EVENTTYPE"
+                String routingKey = new StringBuilder().append("event.").append(tenantId).append(".all.").
+                                                                        append(event.getType()).toString();
+
+
+                //MINIMAL_BASIC makes sure the deliveryMode is 2, means - the message will be persistent
+                amqpManager.getEsChannel().basicPublish(amqpManager.getExchangeName(), routingKey,
+                        MessageProperties.MINIMAL_BASIC, output);
+            } else {
+                logger.info("dummy mode - did not send event to RabbitMQ, only print to log");
+            }
         }
-        else {
-            logger.info("dummy mode - did not send events to RabbitMQ, only print to log");
-        }
+
         logger.info("Successfully published {} elasticSearch events for tenant {}.", events.size(), tenantId);
     }
 
