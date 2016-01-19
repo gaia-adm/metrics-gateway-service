@@ -22,38 +22,21 @@ import java.util.*;
 public class ElasticSearchHandler {
 
     /*
-    * We convert the events into ES bulk format.
-    * Bulk format composed of: action/n data/n action/n data/
-    * More info here: https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
+    * We convert the event into structured json
     * */
-    public <T extends BaseEvent> byte[] convert(Collection<T> events, String tenantId) throws JsonProcessingException {
+    public <T extends BaseEvent> byte[] convert(T event) throws JsonProcessingException {
 
         ObjectMapper mapper = new ObjectMapper();
+        Map propsMap = new HashMap<String, String>();
 
-        //Go over the events and convert them to ES format
-        List<EsPair> esEvents = new ArrayList<EsPair>();
-        for (T event : events) {
+        propsMap.put("timestamp", event.getTime());
+        propsMap.put("source", event.getSource());
+        propsMap.put("tags", event.getTags());
+        propsMap.put("id", event.getId());
 
-            if (event != null) {
-                Map propsMap = new HashMap<String, String>();
+        addSpecificTypeData(event, propsMap);
 
-                propsMap.put("timestamp", event.getTime());
-                propsMap.put("source", event.getSource());
-                propsMap.put("tags", event.getTags());
-                propsMap.put("id", event.getId());
-
-                addSpecificTypeData(event, propsMap);
-
-                byte[] esAction = getAction(tenantId, event.getType());
-                byte[] esEvent = mapper.writeValueAsBytes(propsMap);
-                esEvents.add(new EsPair(esAction, esEvent));
-            }
-
-        }
-
-        byte[] allTogether = combineAll(esEvents);
-        return allTogether;
-
+        return mapper.writeValueAsBytes(propsMap);
     }
 
     private <T extends BaseEvent> void addSpecificTypeData(T event, Map propsMap) {
@@ -95,63 +78,11 @@ public class ElasticSearchHandler {
             if (changeEvent instanceof TestChangeEvent)
             {
                 TestChangeEvent testChangeEvent = (TestChangeEvent) changeEvent;
-                propsMap.put("step",testChangeEvent.getSteps());
+                propsMap.put("test_step",testChangeEvent.getSteps());
             }
         }
     }
 
-    //Prepare the action json
-    private byte[] getAction(String tenantId, String eventType) throws JsonProcessingException {
-        Map actionMap = new HashMap<String, String>();
-        Map actionPropsMap = new HashMap<String, String>();
-        actionPropsMap.put("_index", "gaia_" + tenantId);
-        actionPropsMap.put("_type", eventType);
-        actionMap.put("index", actionPropsMap);
-        ObjectMapper actionMapper = new ObjectMapper();
-        return actionMapper.writeValueAsBytes(actionMap);
-    }
-
-    //Combine all of the byte arrays to big one with '/n' separator
-    private byte[] combineAll(List<EsPair> eventsInESFormat) {
-        byte[] lineSeparator = "\n".getBytes();
-
-        int size=0;
-        for(EsPair pair: eventsInESFormat) {
-            size += pair.getAction().length +
-                    pair.getEvent().length +
-                    (lineSeparator.length * 2);
-        }
-
-        byte[] allTogether = new byte[size];
-        ByteBuffer bf = ByteBuffer.wrap(allTogether);
-        for(EsPair singleEvent: eventsInESFormat) {
-            bf.put(singleEvent.getAction());
-            bf.put(lineSeparator);
-            bf.put(singleEvent.getEvent());
-            bf.put(lineSeparator);
-        }
-        return allTogether;
-    }
-
-    class EsPair
-    {
-        private byte[] action;
-        private byte[] event;
-
-        EsPair(byte[] action, byte[] event) {
-            this.action = action;
-            this.event = event;
-        }
-
-        byte[] getAction() {
-            return action;
-        }
-
-        byte[] getEvent() {
-            return event;
-        }
-
-    }
 
     /* public static void main(String[] args) {
         String jsonEvents = "[{\"event\":\"code_testrun\",\"id\":{\"method\":\"test[418: combination of <[Passed, Pending, Passed, Passed]>]\",\"build_number\":\"29\",\"class\":\"ActivityStatusCommutativeTest\",\"package\":\"com.hp.alm.platform.dataflow\",\"root_build_number\":\"29\"},\"tags\":{\"scm_branch\":null,\"build_result\":\"UNSTABLE\",\"flow_type\":null,\"build_uri_path\":\"job/ALM-Newton-Compile-Server/29/\",\"schema_version\":null},\"result\":{\"status\":\"PASSED\",\"skipped\":false,\"run_time\":0,\"failed_since\":0,\"age\":0,\"error\":null,\"skipped_message\":null},\"source\":{\"root_job_name\":\"ALM-Newton-Compile-Server\",\"build_server_uri\":\"http://mydtbld0048.isr.hp.com:8888/jenkins\",\"job_name\":\"ALM-Newton-Compile-Server\",\"source_type\":\"jenkins\",\"build_server_host\":\"mydtbld0048.isr.hp.com\"},\"time\":\"2015-08-20T10:37:41\"}]";
