@@ -1,29 +1,21 @@
 package com.hp.gaia.mgs.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hp.gaia.mgs.dto.BaseEvent;
-import com.hp.gaia.mgs.dto.OldMetric;
 import com.hp.gaia.mgs.rest.context.TenantContextHolder;
 import com.hp.gaia.mgs.services.MetricsCollectorService;
-import com.hp.gaia.mgs.services.PropertiesKeeperService;
-import com.hp.gaia.mgs.spring.MultiTenantOAuth2Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -38,7 +30,6 @@ public class MeasurementGatewayResource {
     MetricsCollectorService metricsCollector = new MetricsCollectorService();
 
     public MeasurementGatewayResource() throws IOException {
-        System.out.println("Starting mgs abcdef");
     }
 
     @POST
@@ -49,7 +40,8 @@ public class MeasurementGatewayResource {
 
         CompletableFuture.supplyAsync(() -> {
             try {
-                List<BaseEvent> receivedEvents = new ObjectMapper().readValue(jsonEvents, new TypeReference<List<BaseEvent>>() {});
+                List<BaseEvent> receivedEvents = new ObjectMapper().readValue(jsonEvents, new TypeReference<List<BaseEvent>>() {
+                });
                 System.out.println("Tenant " + tenantId + " Got result, number of points: " + receivedEvents.size());
                 metricsCollector.publishEvent(receivedEvents, tenantId);
                 return null;
