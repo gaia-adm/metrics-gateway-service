@@ -14,7 +14,7 @@ public class DefaultController {
 
     @PostConstruct
     void init(){
-        System.out.println("Type something here...");
+        System.out.println("Starting mgs proudly");
     }
 
     @RequestMapping("/")
