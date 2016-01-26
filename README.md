@@ -4,6 +4,12 @@
 
 How to run locally: build a war and put it on Jetty (tested with Jetty 9.2) or run mnn jetty:run
 
+To build the project behind corporate proxy run the following command:
+
+```
+docker build -t local/mgs --build-arg PROXY_HOST=web-proxy.israel.hp.com --build-arg PROXY_PORT=8080 -f Dockerfile.build .
+```
+
 ## Functionality:
 - Accept events sent to the system, convert them to InfluxDB line protocol format and sends to RabbitMQ for further usage.
 - Supports bulk input (request body size up to 100KB)
@@ -89,7 +95,7 @@ How to run locally: build a war and put it on Jetty (tested with Jetty 9.2) or r
 
 
 ## API:
-- Publish metrics 
+- Publish metrics
     - URL: /mgs/rest/v1/gateway/event
     - Method: POST
     - Headers:

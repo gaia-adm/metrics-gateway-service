@@ -2,11 +2,15 @@ machine:
 # pre section is a workaround for https://discuss.circleci.com/t/unable-to-use-docker-cp-but-it-worked-2-days-ago/1137/9
   pre:
     - echo 'DOCKER_OPTS="-s btrfs -e lxc -D --userland-proxy=false"' | sudo tee -a /etc/default/docker
-    - sudo curl -L -o /usr/bin/docker 'https://s3-external-1.amazonaws.com/circle-downloads/docker-1.9.0-circleci-cp-workaround'
+    - sudo curl -L -o /usr/bin/docker 'https://s3-external-1.amazonaws.com/circle-downloads/docker-1.9.1-circleci'
     - sudo chmod 0755 /usr/bin/docker
   services:
     - docker
 dependencies:
+  pre:
+    - sudo apt-get update && sudo apt-get install jq openssl
+    # download update_service script
+    - curl -LO https://raw.githubusercontent.com/gaia-adm/gaia-fleet/master/update_service.sh && chmod +x update_service.sh
   override:
     - cp Dockerfile Dockerfile.run
     - cp Dockerfile.build Dockerfile
@@ -23,17 +27,15 @@ test:
     # docker run -d --link sts:sts -e useAmqp=true -e authServer=sts:8080 -p 9002:8080 --name mgs gaiaadm/mgs
     - curl -i http://localhost:9002/mgs/ | grep "200 OK"
 deployment:
-  hub:
-    branch: master
+  continuous:
+    branch: [master, develop, /feature_.*/]
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - docker push gaiaadm/mgs
+      - docker push gaiaadm/msg
+      - ./update_service.sh -t $CIRCLE_BRANCH -b $CIRCLE_BUILD_NUM -f metrics-gateway-service.service -n msg
 notify:
   webhooks:
     - url: http://beta.gaiahub.io:88/wh/5a866f9b-98c9-438d-a8d4-53cf4ae9599c/4c310c8e220ee9bead74eece42ce0e109fd3535e
 general:
-  branches:
-    only:
-      - master
   artifacts:
     - target/mgs.war

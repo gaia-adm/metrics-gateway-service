@@ -1,5 +1,9 @@
 FROM maven:3.3.3-jdk-8
 
+# use --build-arg option to pass system proxy name and port
+ARG PROXY_HOST
+ARG PROXY_PORT
+
 ENV GAIA_HOME=/usr/local/gaia/
 
 RUN mkdir -p $GAIA_HOME
@@ -10,11 +14,21 @@ WORKDIR $GAIA_HOME
 # selectively add the POM file
 ADD pom.xml $GAIA_HOME
 
+VOLUME [$GAIA_HOME/target]
+
 # get all the downloads out of the way
-RUN ["mvn","verify","clean","--fail-never"]
+RUN if [ -z "$PROXY_HOST" ]; then \
+      mvn verify clean --fail-never ; \
+    else \
+      mvn -DuseProxy=true -DproxyHost=$PROXY_HOST -DproxyPort=$PROXY_PORT verify clean --fail-never ; \
+    fi
 
 # add source
 ADD . $GAIA_HOME
 
 # run maven verify
-RUN ["mvn","verify"]
+RUN if [ -z "$PROXY_HOST" ]; then \
+      mvn verify --fail-never ; \
+    else \
+      mvn -DuseProxy=true -DproxyHost=$PROXY_HOST -DproxyPort=$PROXY_PORT verify --fail-never ; \
+    fi
