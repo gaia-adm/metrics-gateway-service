@@ -22,12 +22,10 @@ public class MetricsCollectorService {
 
     private final static Logger logger = LoggerFactory.getLogger(MetricsCollectorService.class);
 
-    private final static String INFLUXDB_DB_NAME_PROPERTY = "dbname";
     AmqpManager amqpManager;
 
     private Boolean useAmqp = Boolean.valueOf(PropertiesKeeperService.getInstance().getEnvOrPropAsString("useAmqp"));
     private Boolean processEs = Boolean.valueOf(PropertiesKeeperService.getInstance().getEnvOrPropAsString("processEs"));
-    private Boolean processInfluxDB = Boolean.valueOf(PropertiesKeeperService.getInstance().getEnvOrPropAsString("processInfluxDB"));
 
     public MetricsCollectorService() throws IOException {
         this.amqpManager = new AmqpManager();
@@ -45,18 +43,11 @@ public class MetricsCollectorService {
         } else {
             System.out.println("ElasticSearch processing is disabled");
         }
-
-        System.out.println("processInfluxDB flag is " + processInfluxDB);
-        if (processInfluxDB) {
-            System.out.println("InfluxDB processing is activated");
-        } else {
-            System.out.println("InfluxDB processing is disabled");
-        }
     }
 
 
     /**
-     * Handles both ElasticSearch and InfluxDB events publishing
+     * Handles  ElasticSearch events publishing
      *
      * @param events   - List of input events (json); events must extend {@link com.hp.gaia.mgs.dto.BaseEvent}
      * @param tenantId - tenant id reported the events
@@ -66,10 +57,6 @@ public class MetricsCollectorService {
     public <T extends BaseEvent> void publishEvent(Collection<T> events, String tenantId) throws IOException, TimeoutException {
 
         logger.info("Going to publish {} events for tenant {}.", events.size(), tenantId);
-
-        if (processInfluxDB) {
-            handleInfluxDB(events, tenantId);
-        }
 
         if (processEs)
         {
@@ -95,7 +82,6 @@ public class MetricsCollectorService {
                 String routingKey = new StringBuilder().append("event.").append(tenantId).append(".all.").
                                                                         append(event.getType()).toString();
 
-
                 //MINIMAL_BASIC makes sure the deliveryMode is 2, means - the message will be persistent
                 amqpManager.getEsChannel().basicPublish(amqpManager.getExchangeName(), routingKey,
                         MessageProperties.MINIMAL_BASIC, output);
@@ -103,43 +89,7 @@ public class MetricsCollectorService {
                 logger.info("dummy mode - did not send event to RabbitMQ, only print to log");
             }
         }
-
         logger.info("Successfully published {} elasticSearch events for tenant {}.", events.size(), tenantId);
     }
-
-    /*
-     * Translate json formatted input to InfluxDB line protocol (https://influxdb.com/docs/v0.9/write_protocols/write_syntax.html) and publish to the system
-     * and publish to RabbitMQ (or log)
-     * InfluxDB line protocol requires the following format: [key] [fields] [timestamp]
-     * For example: cpu,host=server\ 01,region=us-west cpu load=10.0,alert=true,reason="value above maximum threshold" 1434055562005
-     * NOTE: timestamp is in milliseconds, so inserting data to InfluxDB requires precision=ms parameter (default is nanoseconds)
-    * */
-    private <T extends BaseEvent> void handleInfluxDB(Collection<T> events, String tenantId) throws IOException, TimeoutException {
-        AMQP.BasicProperties.Builder propsBuilder = new AMQP.BasicProperties.Builder();
-        Map<String, Object> map = new HashMap<>();
-        map.put(INFLUXDB_DB_NAME_PROPERTY, tenantId);
-        propsBuilder.headers(map);
-
-        StringBuffer mainSb = new StringBuffer();
-
-        InfluxLineProtocolConverterFactory converterFactory = new InfluxLineProtocolConverterFactory();
-        for (T event : events) {
-            if(event != null) {
-                mainSb.append(converterFactory.getConverter(event.getType()).convert(event));
-            }
-        }
-
-        logger.debug("Publishing influxdb events for tenant {}: payload size is {} ", tenantId, mainSb.toString().length());
-        logger.trace("Publishing influxdb events for tenant {}: {} ", tenantId, mainSb);
-        if (useAmqp) {
-            amqpManager.getInfluxDbChannel().basicPublish("", amqpManager.getInfluxDbQueueName(),
-                    propsBuilder.build(), mainSb.toString().getBytes());
-        }
-        else {
-            logger.info("dummy mode - did not send events to RabbitMQ, only print to log");
-        }
-        logger.info("Successfully published {} influxdb events for tenant {}.", events.size(), tenantId);
-    }
-
 }
 

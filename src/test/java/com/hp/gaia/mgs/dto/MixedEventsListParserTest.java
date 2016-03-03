@@ -29,7 +29,6 @@ public class MixedEventsListParserTest {
 
     @Test
     public void testAllEvents() throws Exception {
-
         String allEvents = "[" + issueChange + ", " + testChange + "," + codeCommit + "," + codeTestrun + "," + almTestrun + "," + generalEvent + "]";
 
         ObjectMapper mapper = new ObjectMapper();
@@ -37,33 +36,6 @@ public class MixedEventsListParserTest {
         });
 
         System.out.println("Number of events: " + events.size());
-
-        Map<String, Integer> eventTypeMap = new HashMap<>();
-
-        for (BaseEvent event : events) {
-
-            InfluxLineProtocolConverter converter = new InfluxLineProtocolConverterFactory().getConverter(event.getType());
-            String result = converter.convert(event);
-
-            System.out.print(result);
-            String[] subStrings = result.replace(System.lineSeparator(), ",").split(",");
-            String type = result.split(",")[0];
-            Integer i = 0;
-            for (String subString : subStrings) {
-                if (subString.equals(type)) {
-                    i++;
-                }
-            }
-            eventTypeMap.put(type, i);
-        }
-
         Assert.assertEquals("6 events arrived", 6, events.size());
-        Assert.assertEquals("3 records for issue_change expected", Long.valueOf(3L), Long.valueOf(eventTypeMap.get(IssueChangeEvent.EVENT_TYPE)));
-        Assert.assertEquals("3 records for test_change expected", Long.valueOf(3L), Long.valueOf(eventTypeMap.get(TestChangeEvent.EVENT_TYPE)));
-        Assert.assertEquals("2 records for code_commit expected", Long.valueOf(2L), Long.valueOf(eventTypeMap.get(CodeCommitEvent.EVENT_TYPE)));
-        Assert.assertEquals("1 records for code_testrun expected", Long.valueOf(1L), Long.valueOf(eventTypeMap.get(CodeTestRunEvent.EVENT_TYPE)));
-        Assert.assertEquals("4 records for tm_testrun expected", Long.valueOf(4L), Long.valueOf(eventTypeMap.get(AlmTestRunEvent.EVENT_TYPE)));
-        Assert.assertEquals("1 record for general expected", Long.valueOf(1L), Long.valueOf(eventTypeMap.get(GeneralEvent.EVENT_TYPE)));
-
     }
 }

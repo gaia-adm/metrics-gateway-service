@@ -1,8 +1,8 @@
 package com.hp.gaia.mgs.services;
 
 import com.hp.gaia.mgs.amqp.AmqpManager;
+import com.hp.gaia.mgs.dto.change.DeserializationUtils;
 import com.hp.gaia.mgs.dto.change.IssueChangeEvent;
-import com.hp.gaia.mgs.dto.change.ChangeToInfluxLineProtocol;
 import com.rabbitmq.client.Channel;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,27 +34,7 @@ public class MetricsCollectorServiceTest {
 
     @Test
     public void testEscapedString() throws Exception {
-        assertEquals("my\\ do\\\"uble\\ quoted\\ string\\ part\\ 1\\,\\ part\\ 2", new ChangeToInfluxLineProtocol().getEscapedString("my do\"uble quoted string part 1, part 2"));
-    }
-
-    @Test
-    public void testQuoteString() throws Exception {
-        assertEquals("\"str\"", new ChangeToInfluxLineProtocol().getQuotedValue("str"));
-    }
-
-    @Test
-    public void testPublishEvent() throws Exception {
-
-        List<IssueChangeEvent> eventList = new ArrayList<>();
-        eventList.add(createIssueChangeEvent("aaa"));
-        eventList.add(createIssueChangeEvent("bbb"));
-
-        when(amqpManager.getInfluxDbChannel()).thenReturn(channel);
-        //void method do nothing by default - keep it here just for the reference
-        // doNothing().when(channel).basicPublish(anyString(), anyString(), anyObject(), anyObject());
-
-        mcs.publishEvent(eventList, "1");
-
+        assertEquals("my\\ do\\\"uble\\ quoted\\ string\\ part\\ 1\\,\\ part\\ 2", new DeserializationUtils().getEscapedString("my do\"uble quoted string part 1, part 2"));
     }
 
     private IssueChangeEvent createIssueChangeEvent(String prefix) {

@@ -13,7 +13,7 @@ import java.util.*;
  * Some methods that are reusable in this package.
  * NOTE: the class access level is not public
  */
-class DeserializationUtils {
+public class DeserializationUtils {
 
     Logger logger = LoggerFactory.getLogger(DeserializationUtils.class);
 
@@ -31,16 +31,16 @@ class DeserializationUtils {
                 case "name":
                     break;
                 case "to":
-                    innerField.setTo(new ChangeToInfluxLineProtocol().getEscapedString(fieldNode.get(curSubFieldName).asText()));
+                    innerField.setTo(getEscapedString(fieldNode.get(curSubFieldName).asText()));
                     break;
                 case "from":
-                    innerField.setFrom(new ChangeToInfluxLineProtocol().getEscapedString(fieldNode.get(curSubFieldName).asText()));
+                    innerField.setFrom(getEscapedString(fieldNode.get(curSubFieldName).asText()));
                     break;
                 case "ttc":
                     innerField.setTtc(fieldNode.get(curSubFieldName).asLong());
                     break;
                 default:
-                    innerField.addCustomField(curSubFieldName, new ChangeToInfluxLineProtocol().getEscapedString(fieldNode.get(curSubFieldName).asText()));
+                    innerField.addCustomField(curSubFieldName, getEscapedString(fieldNode.get(curSubFieldName).asText()));
                     break;
             }
         }
@@ -71,5 +71,15 @@ class DeserializationUtils {
             }
         }
         return list;
+    }
+
+    /**
+     * Some characters must be escaped for InfluxDB based on https://influxdb.com/docs/v0.9/write_protocols/write_syntax.html
+     *
+     * @param str String to replace spaces, commas, double-quotes, quotes and an equal size
+     * @return String after the replacement
+     */
+    public String getEscapedString(String str) {
+        return str.replace(" ", "\\ ").replace(",", "\\,").replace("\"", "\\\"").replace("'", "\\'").replace("=","\\=");
     }
 }
