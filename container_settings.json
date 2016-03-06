@@ -1,0 +1,15 @@
+{
+  "User" : "jetty",
+  "Env" : [ "useAmqp=true", "processEs=true", "amqpHost=rabbitmq.skydns.local", "amqpUser=admin", "amqpPassword=admin", "authServer=sts.skydns.local:8080", "SERVICE_NAME=mgs", "SERVICE_TAGS=master" ],
+  "Volumes" : { },
+  "ExposedPorts" : { },
+  "HostConfig" : {
+    "Binds" : [ ],
+    "PortBindings" : {
+      "8080/tcp" : [ {
+        "HostIp" : "",
+        "HostPort" : "9002"
+      } ]
+    }
+  }
+}
